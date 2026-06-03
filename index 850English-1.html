@@ -1,0 +1,1876 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>850词 · 英语启蒙</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,900;1,300&family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500&display=swap');
+  :root{--bg:#0f0f0d;--surface:#1a1a16;--card:#222219;--border:#2e2e28;--accent:#e8c84a;--accent2:#5fe0a0;--accent3:#f07060;--text:#e8e6d8;--muted:#888880;--dim:#555550;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Noto Sans SC',sans-serif;min-height:100vh;overflow-x:hidden;}
+  header{display:flex;align-items:center;justify-content:space-between;padding:18px 32px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:100;}
+  .logo{font-family:'Fraunces',serif;font-size:22px;font-weight:900;letter-spacing:-1px;color:var(--accent);}
+  .logo span{color:var(--text);font-weight:300;font-style:italic;}
+  .header-stats{display:flex;gap:24px;align-items:center;}
+  .stat-pill{font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);border:1px solid var(--border);padding:4px 12px;border-radius:100px;}
+  .stat-pill b{color:var(--accent2);}
+  .tabs{display:flex;padding:0 32px;border-bottom:1px solid var(--border);background:var(--surface);}
+  .tab-btn{padding:14px 20px;font-family:'Noto Sans SC',sans-serif;font-size:13px;font-weight:500;color:var(--muted);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .2s;}
+  .tab-btn:hover{color:var(--text);}
+  .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+  .main{display:flex;height:calc(100vh - 100px);}
+  .sidebar{width:220px;flex-shrink:0;border-right:1px solid var(--border);background:var(--surface);overflow-y:auto;padding:16px 0;}
+  .sidebar-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--dim);padding:8px 20px 4px;text-transform:uppercase;}
+  .category-btn{display:flex;justify-content:space-between;align-items:center;width:100%;padding:10px 20px;background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;text-align:left;transition:all .15s;font-family:'Noto Sans SC',sans-serif;}
+  .category-btn:hover{background:var(--card);color:var(--text);}
+  .category-btn.active{background:var(--card);color:var(--accent);}
+  .category-btn .count{font-family:'DM Mono',monospace;font-size:11px;color:var(--dim);}
+  .category-btn.active .count{color:var(--accent);opacity:.6;}
+  .content{flex:1;overflow-y:auto;padding:24px 28px;}
+  .section-header{display:flex;align-items:baseline;gap:12px;margin-bottom:20px;}
+  .section-title{font-family:'Fraunces',serif;font-size:28px;font-weight:900;color:var(--text);letter-spacing:-1px;}
+  .section-sub{font-family:'DM Mono',monospace;font-size:12px;color:var(--dim);}
+  .search-bar{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:14px;padding:10px 16px;border-radius:8px;margin-bottom:20px;outline:none;transition:border-color .2s;}
+  .search-bar::placeholder{color:var(--dim);}
+  .search-bar:focus{border-color:var(--accent);}
+  .word-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;}
+  .word-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px;cursor:pointer;transition:all .15s;position:relative;}
+  .word-card:hover{border-color:var(--accent);transform:translateY(-1px);background:#26261e;}
+  .word-card.learned{border-color:var(--accent2);opacity:.7;}
+  .word-card.learned::after{content:'✓';position:absolute;top:6px;right:8px;font-size:11px;color:var(--accent2);}
+  .word-en{font-family:'Fraunces',serif;font-size:17px;font-weight:600;color:var(--text);}
+  .word-zh{font-size:11px;color:var(--muted);margin-top:3px;}
+  /* PRACTICE */
+  .practice-area{flex:1;overflow-y:auto;padding:40px;display:flex;flex-direction:column;align-items:center;gap:24px;}
+  .progress-wrap{width:100%;max-width:680px;display:flex;align-items:center;gap:16px;}
+  .progress-bar-bg{flex:1;height:4px;background:var(--border);border-radius:4px;overflow:hidden;}
+  .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width .4s ease;}
+  .progress-text{font-family:'DM Mono',monospace;font-size:12px;color:var(--dim);white-space:nowrap;}
+  .loading-bar{width:100%;max-width:680px;height:2px;background:var(--border);border-radius:2px;overflow:hidden;display:none;}
+  .loading-bar.active{display:block;}
+  .loading-bar::after{content:'';display:block;height:100%;width:40%;background:var(--accent);border-radius:2px;animation:slide 1.2s ease-in-out infinite;}
+  @keyframes slide{0%{transform:translateX(-120%)}100%{transform:translateX(320%)}}
+  .loading-msg{font-family:'DM Mono',monospace;font-size:12px;color:var(--dim);text-align:center;display:none;}
+  .loading-msg.active{display:block;}
+  /* word card */
+  .p-word-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px 40px;width:100%;max-width:680px;text-align:center;}
+  .p-word-en{font-family:'Fraunces',serif;font-size:52px;font-weight:900;letter-spacing:-2px;color:var(--accent);line-height:1;margin-bottom:8px;}
+  .p-word-zh{font-size:18px;color:var(--muted);}
+  /* sentence */
+  .sentence-box{width:100%;max-width:680px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;}
+  .sentence-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+  .sentence-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;}
+  /* toolbar */
+  .toolbar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;}
+  .toolbar-left,.toolbar-right{display:flex;align-items:center;gap:6px;}
+  .tool-btn{
+    display:inline-flex;align-items:center;gap:5px;
+    background:var(--card);border:1px solid var(--border);
+    color:var(--muted);border-radius:7px;
+    padding:6px 10px;font-size:12px;cursor:pointer;
+    transition:all .15s;white-space:nowrap;font-family:'Noto Sans SC',sans-serif;
+  }
+  .tool-btn:hover{border-color:var(--accent2);color:var(--text);}
+  .tool-btn.speed-active{border-color:var(--accent2);color:var(--accent2);background:rgba(95,224,160,.08);}
+  .tool-btn.speaking{border-color:var(--accent2);color:var(--accent2);animation:pulse .8s ease infinite;}
+  .tool-btn kbd{
+    font-family:'DM Mono',monospace;font-size:10px;
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:3px;padding:1px 4px;color:var(--dim);
+    margin-left:2px;
+  }
+  .tool-sep{width:1px;height:20px;background:var(--border);margin:0 2px;}
+  /* sentence-actions kept for panel */
+  .sentence-actions{display:flex;gap:8px;align-items:center;}
+  .icon-btn{background:none;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 10px;font-size:13px;cursor:pointer;transition:all .15s;font-family:'DM Mono',monospace;}
+  .icon-btn:hover{border-color:var(--accent2);color:var(--accent2);}
+  .icon-btn.speaking{border-color:var(--accent2);color:var(--accent2);animation:pulse .8s ease infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+  .speed-btn{background:var(--card);border:1px solid var(--border);color:var(--dim);font-family:'DM Mono',monospace;font-size:11px;padding:3px 8px;border-radius:4px;cursor:pointer;transition:all .15s;}
+  .speed-btn.active{border-color:var(--accent2);color:var(--accent2);}
+  /* mode toggle */
+  .mode-toggle{display:flex;gap:0;background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden;width:100%;max-width:680px;}
+  .mode-btn{flex:1;padding:10px 0;font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);background:none;border:none;cursor:pointer;transition:all .15s;letter-spacing:.3px;}
+  .mode-btn.active{background:var(--accent);color:#0f0f0d;font-weight:700;}
+  .mode-btn:not(.active):hover{color:var(--text);background:var(--surface);}
+  /* full sentence input mode */
+  .full-input{width:100%;max-width:680px;background:var(--surface);border:2px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:15px;padding:14px 16px;border-radius:10px;outline:none;transition:border-color .2s;letter-spacing:.3px;resize:none;height:60px;}
+  .full-input:focus{border-color:var(--accent);}
+  .full-input.correct-flash{border-color:var(--accent2);}
+  .full-input.shake{animation:shake .4s ease;}
+  /* slot grid - 横线格子输入 */
+  .slots-row{display:flex;flex-wrap:wrap;gap:10px 14px;margin-bottom:16px;align-items:flex-end;}
+  .slot-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;}
+  .slot-input{
+    font-family:'DM Mono',monospace;font-size:15px;font-weight:500;
+    color:var(--text);background:transparent;
+    border:none;border-bottom:2px solid var(--border);
+    outline:none;text-align:center;padding:4px 2px;
+    min-width:28px;max-width:160px;
+    transition:border-color .15s,color .15s;
+    letter-spacing:.5px;
+  }
+  .slot-input:focus{border-bottom-color:var(--accent);color:var(--accent);}
+  .slot-input.correct{border-bottom-color:var(--accent2);color:var(--accent2);}
+  .slot-input.wrong{border-bottom-color:var(--accent3);color:var(--accent3);}
+  .slot-input.hint-shown{border-bottom-color:var(--accent);color:var(--accent);opacity:.7;}
+  .slot-input:disabled{cursor:default;}
+  .slot-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.5px;height:14px;}
+  .slot-label.correct{color:var(--accent2);}
+  .slot-label.wrong{color:var(--accent3);}
+  /* keep old token styles for compatibility */
+  .token{font-family:'DM Mono',monospace;font-size:14px;padding:4px 10px;border-radius:6px;border:1px solid transparent;}
+  .token.correct{background:rgba(95,224,160,.15);border-color:var(--accent2);color:var(--accent2);}
+  .token.wrong{background:rgba(240,112,96,.15);border-color:var(--accent3);color:var(--accent3);}
+  .token.hint-shown{background:rgba(232,200,74,.1);border-color:var(--accent);color:var(--accent);}
+  .token.pending{color:var(--dim);border-color:var(--border);}
+  /* input area */
+  .input-area{display:flex;gap:8px;}
+  .word-input{flex:1;background:var(--surface);border:2px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:16px;padding:12px 16px;border-radius:10px;outline:none;transition:border-color .2s;letter-spacing:.5px;}
+  .word-input:focus{border-color:var(--accent);}
+  .word-input.shake{animation:shake .4s ease;}
+  .word-input.correct-flash{border-color:var(--accent2);}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+  .submit-btn{background:var(--accent);color:#0f0f0d;border:none;border-radius:10px;padding:12px 20px;font-size:16px;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap;}
+  .submit-btn:hover{background:#f0d060;}
+  .submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+  /* hint reveal */
+  .hint-strip{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .hint-word{font-family:'DM Mono',monospace;font-size:13px;color:var(--dim);background:var(--surface);border:1px dashed var(--border);padding:4px 10px;border-radius:6px;}
+  /* sentence zh */
+  .sentence-zh{font-size:14px;color:var(--muted);margin-top:12px;line-height:1.6;}
+  /* full reveal */
+  .full-reveal{display:none;margin-top:12px;padding:12px 16px;background:rgba(232,200,74,.08);border:1px solid rgba(232,200,74,.25);border-radius:8px;font-family:'Fraunces',serif;font-size:18px;font-weight:300;color:var(--text);line-height:1.6;letter-spacing:-.2px;}
+  .full-reveal em{color:var(--accent);font-weight:600;font-style:italic;}
+  /* word counter */
+  .word-counter{font-family:'DM Mono',monospace;font-size:12px;color:var(--dim);margin-top:8px;text-align:right;}
+  /* feedback */
+  .feedback-row{width:100%;max-width:680px;display:none;}
+  .feedback-msg{font-family:'DM Mono',monospace;font-size:13px;padding:10px 16px;border-radius:8px;display:flex;align-items:center;gap:8px;}
+  .feedback-msg.correct{background:rgba(95,224,160,.12);color:var(--accent2);}
+  .feedback-msg.wrong{background:rgba(240,112,96,.12);color:var(--accent3);}
+  /* btn */
+  .btn{font-family:'Noto Sans SC',sans-serif;font-size:13px;font-weight:500;padding:10px 24px;border-radius:8px;border:none;cursor:pointer;transition:all .15s;}
+  .btn-primary{background:var(--accent);color:#0f0f0d;}
+  .btn-primary:hover{background:#f0d060;}
+  .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);}
+  .btn-ghost:hover{border-color:var(--muted);color:var(--text);}
+  .btn-row{display:flex;gap:10px;justify-content:center;}
+  /* empty */
+  .empty-state{text-align:center;padding:60px 20px;color:var(--dim);}
+  .empty-state .big{font-size:48px;margin-bottom:12px;}
+  .empty-state p{font-size:14px;line-height:1.8;}
+  /* api warn */
+
+  /* panel */
+  .panel-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;align-items:center;justify-content:center;padding:24px;}
+  .panel-overlay.open{display:flex;}
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px;width:100%;max-width:560px;position:relative;animation:pop .2s ease;}
+  @keyframes pop{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
+  .panel-close{position:absolute;top:16px;right:20px;background:none;border:none;color:var(--dim);font-size:20px;cursor:pointer;}
+  .panel-word{font-family:'Fraunces',serif;font-size:48px;font-weight:900;letter-spacing:-2px;color:var(--accent);}
+  .panel-def{font-size:18px;color:var(--text);margin-bottom:24px;margin-top:8px;}
+  .panel-section-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-bottom:10px;}
+  .panel-sentence{font-family:'Fraunces',serif;font-size:18px;font-weight:300;line-height:1.6;color:var(--text);margin-bottom:8px;}
+  .panel-sentence em{color:var(--accent);font-weight:600;font-style:italic;}
+  .panel-sentence-zh{font-size:14px;color:var(--muted);line-height:1.6;}
+  .panel-loading{color:var(--dim);font-family:'DM Mono',monospace;font-size:13px;padding:20px 0;}
+  .panel-actions{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap;align-items:center;}
+  .tab-content{display:none;}
+  .tab-content.active{display:flex;}
+  ::-webkit-scrollbar{width:4px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">850<span>词</span></div>
+  <div class="header-stats">
+    <div class="stat-pill">已学 <b id="learned-count">0</b> / 850</div>
+    <div class="stat-pill">今日练习 <b id="practice-count">0</b> 次</div>
+  </div>
+</header>
+
+<div style="background:var(--surface);border-bottom:1px solid var(--border);">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('vocab')">📖 词汇</button>
+    <button class="tab-btn" onclick="switchTab('practice')">🎯 练习</button>
+  </div>
+</div>
+
+<!-- VOCAB TAB -->
+<div class="tab-content active main" id="tab-vocab">
+  <div class="sidebar">
+    <div class="sidebar-label">分类</div>
+    <button class="category-btn active" onclick="selectCategory('all')" id="cat-all">全部词汇 <span class="count">850</span></button>
+    <button class="category-btn" onclick="selectCategory('operations')" id="cat-operations">操作词 <span class="count">100</span></button>
+    <button class="category-btn" onclick="selectCategory('general')" id="cat-general">通用词 <span class="count">400</span></button>
+    <button class="category-btn" onclick="selectCategory('picturable')" id="cat-picturable">图画词 <span class="count">200</span></button>
+    <button class="category-btn" onclick="selectCategory('qualities')" id="cat-qualities">形容词 <span class="count">150</span></button>
+    <div class="sidebar-label" style="margin-top:16px;">筛选</div>
+    <button class="category-btn" onclick="selectCategory('unlearned')" id="cat-unlearned">未学习 <span class="count" id="unlearned-count">850</span></button>
+    <button class="category-btn" onclick="selectCategory('learned')" id="cat-learned">已学习 <span class="count" id="learned-sidebar">0</span></button>
+  </div>
+  <div class="content">
+    <div class="section-header">
+      <div class="section-title" id="section-title">全部词汇</div>
+      <div class="section-sub" id="section-sub">850 个词</div>
+    </div>
+    <input class="search-bar" placeholder="搜索单词…" id="search-input" oninput="filterWords()" />
+    <div class="word-grid" id="word-grid"></div>
+  </div>
+</div>
+
+<!-- PRACTICE TAB -->
+<div class="tab-content" id="tab-practice" style="flex-direction:column;align-items:stretch;height:calc(100vh - 100px);overflow:hidden;">
+  <div class="practice-area" id="practice-area">
+
+
+
+    <!-- progress -->
+    <div class="progress-wrap" id="progress-wrap" style="display:none">
+      <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-fill"></div></div>
+      <div class="progress-text" id="progress-text">0 / 10</div>
+    </div>
+
+    <div class="loading-bar" id="loading-bar"></div>
+    <div class="loading-msg" id="loading-msg">AI 正在生成例句…</div>
+
+    <!-- current word display -->
+    <div class="p-word-card" id="p-word-card" style="display:none">
+      <div class="p-word-en" id="p-word"></div>
+      <div class="p-word-zh" id="p-zh"></div>
+    </div>
+
+    <!-- mode toggle -->
+    <div class="mode-toggle" id="mode-toggle" style="display:none">
+      <button class="mode-btn active" id="mode-btn-word" onclick="setMode('word')">⌨️ 逐词模式　<span style="font-size:10px;opacity:.7">每词 Enter 核查</span></button>
+      <button class="mode-btn" id="mode-btn-full" onclick="setMode('full')">📝 整句模式　<span style="font-size:10px;opacity:.7">全部输完再核查</span></button>
+    </div>
+
+    <!-- sentence typing area -->
+    <div class="sentence-box" id="sentence-box" style="display:none">
+
+      <!-- toolbar：可点击按钮 + 快捷键提示 -->
+      <div class="toolbar" id="main-toolbar">
+        <div class="toolbar-left">
+          <button class="tool-btn" id="speak-btn" onclick="speakCurrent()" title="朗读句子 (Shift+1)">
+            🔊 <span>朗读</span><kbd>⇧1</kbd>
+          </button>
+          <div class="tool-sep"></div>
+          <button class="tool-btn speed-active" id="spd-slow" onclick="setSpeed(0.8,this,'spd-slow')" title="慢速 (Shift+2)">
+            🐢 <span>慢</span><kbd>⇧2</kbd>
+          </button>
+          <button class="tool-btn" id="spd-normal" onclick="setSpeed(1.0,this,'spd-normal')" title="正常速度 (Shift+3)">
+            ▶ <span>正常</span><kbd>⇧3</kbd>
+          </button>
+          <button class="tool-btn" id="spd-fast" onclick="setSpeed(1.2,this,'spd-fast')" title="快速 (Shift+4)">
+            🐇 <span>快</span><kbd>⇧4</kbd>
+          </button>
+        </div>
+        <div class="toolbar-right">
+          <button class="tool-btn" id="hint-btn" onclick="toggleHint()" title="提示 (Shift+5)">
+            💡 <span>提示</span><kbd>⇧5</kbd>
+          </button>
+          <button class="tool-btn" onclick="revealAll()" title="显示答案 (Shift+6)">
+            👁 <span>答案</span><kbd>⇧6</kbd>
+          </button>
+        </div>
+      </div>
+
+      <div class="sentence-header" style="margin-top:14px;">
+        <div class="sentence-label" id="sentence-label-text">逐词输入句子</div>
+      </div>
+
+      <!-- slot grid (shared by both modes) -->
+      <div class="slots-row" id="slots-row"></div>
+
+      <!-- word counter -->
+      <div class="word-counter" id="word-counter"></div>
+
+      <!-- FULL MODE check button (only shown in full mode) -->
+      <div id="full-check-bar" style="display:none;margin-top:14px;">
+        <button class="btn btn-primary" style="width:100%;" onclick="submitFullSentence()">核查答案</button>
+      </div>
+
+      <!-- hint strip (hidden by default) -->
+      <div class="hint-strip" id="hint-strip" style="display:none"></div>
+      <!-- full reveal -->
+      <div class="full-reveal" id="full-reveal"></div>
+      <!-- zh translation -->
+      <div class="sentence-zh" id="sentence-zh"></div>
+    </div>
+
+    <!-- feedback -->
+    <div class="feedback-row" id="feedback-row">
+      <div class="feedback-msg" id="feedback-msg"></div>
+    </div>
+
+    <!-- next btn -->
+    <div class="btn-row" id="btn-row" style="display:none">
+      <button class="btn btn-ghost" onclick="retryCurrent()">🔁 重试</button>
+      <button class="btn btn-primary" onclick="nextWord()">下一个 →</button>
+    </div>
+
+    <!-- done -->
+    <div class="empty-state" id="practice-empty" style="display:none">
+      <div class="big">🎉</div>
+      <p>这轮练习完成！</p>
+      <br><button class="btn btn-primary" onclick="startPractice()">再来一轮</button>
+    </div>
+
+    <!-- start -->
+    <div class="empty-state" id="practice-start">
+      <div class="big">⌨️</div>
+      <p>逐词打出 AI 生成的口语句子<br><span style="font-size:12px;color:var(--dim)">每词回车确认 · 错误有提示 · 可选择性显示答案</span></p>
+      <br><button class="btn btn-primary" onclick="startPractice()">开始练习</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Word Detail Panel -->
+<div class="panel-overlay" id="panel-overlay" onclick="closePanel(event)">
+  <div class="panel">
+    <button class="panel-close" onclick="closePanelDirect()">✕</button>
+    <div class="panel-word" id="panel-word"></div>
+    <div class="panel-def" id="panel-def"></div>
+    <div class="panel-section-label">AI 生成例句</div>
+    <div class="panel-loading" id="panel-loading">正在生成例句…</div>
+    <div id="panel-sentence-wrap" style="display:none">
+      <div class="panel-sentence" id="panel-sentence"></div>
+      <div class="panel-sentence-zh" id="panel-sentence-zh"></div>
+    </div>
+    <div class="panel-actions">
+      <button class="btn btn-primary" onclick="practiceThisWord()">🎯 练习这个词</button>
+      <button class="btn btn-ghost" id="learned-toggle" onclick="toggleLearned()">标记已学</button>
+      <button class="icon-btn" id="panel-speak-btn" onclick="speakPanel()" style="display:none">🔊 朗读</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS OVERLAY (答对音效用) -->
+<canvas id="confetti-canvas" style="position:fixed;inset:0;pointer-events:none;z-index:300;display:none;"></canvas>
+
+<script>
+// ── WORDS DATA ──
+const WORDS={
+  operations:[
+    {w:"come",z:"来"},{w:"get",z:"得到"},{w:"give",z:"给"},{w:"go",z:"去"},{w:"keep",z:"保持"},
+    {w:"let",z:"让"},{w:"make",z:"做/制造"},{w:"put",z:"放"},{w:"seem",z:"似乎"},{w:"take",z:"拿/取"},
+    {w:"be",z:"是"},{w:"do",z:"做"},{w:"have",z:"有"},{w:"say",z:"说"},{w:"see",z:"看/见"},
+    {w:"send",z:"发送"},{w:"may",z:"可能/可以"},{w:"will",z:"将会"},
+    {w:"about",z:"关于"},{w:"across",z:"穿过"},{w:"after",z:"之后"},{w:"against",z:"反对"},
+    {w:"among",z:"在…之中"},{w:"at",z:"在"},{w:"before",z:"之前"},{w:"between",z:"在…之间"},
+    {w:"by",z:"通过/被"},{w:"down",z:"下"},{w:"from",z:"从"},{w:"in",z:"在…里"},
+    {w:"off",z:"离开"},{w:"on",z:"在…上"},{w:"over",z:"在…上方"},{w:"through",z:"穿过"},
+    {w:"to",z:"到"},{w:"under",z:"在…下面"},{w:"up",z:"上"},{w:"with",z:"和/与"},
+    {w:"as",z:"如同"},{w:"for",z:"为了"},{w:"of",z:"的"},{w:"till",z:"直到"},{w:"than",z:"比"},
+    {w:"a",z:"一(冠词)"},{w:"the",z:"这/那(冠词)"},{w:"all",z:"全部"},{w:"any",z:"任何"},
+    {w:"every",z:"每个"},{w:"little",z:"一点/小"},{w:"much",z:"很多"},{w:"no",z:"没有"},
+    {w:"other",z:"其他"},{w:"some",z:"一些"},{w:"such",z:"如此"},{w:"that",z:"那个"},
+    {w:"this",z:"这个"},{w:"I",z:"我"},{w:"he",z:"他"},{w:"you",z:"你"},{w:"who",z:"谁"},
+    {w:"and",z:"和"},{w:"because",z:"因为"},{w:"but",z:"但是"},{w:"or",z:"或者"},
+    {w:"if",z:"如果"},{w:"though",z:"虽然"},{w:"while",z:"当…时候"},
+    {w:"how",z:"怎样"},{w:"when",z:"当/何时"},{w:"where",z:"在哪里"},{w:"why",z:"为什么"},
+    {w:"again",z:"再次"},{w:"ever",z:"曾经"},{w:"far",z:"远的"},{w:"forward",z:"向前"},
+    {w:"here",z:"这里"},{w:"near",z:"近的"},{w:"now",z:"现在"},{w:"out",z:"外面"},
+    {w:"still",z:"仍然"},{w:"then",z:"然后"},{w:"there",z:"那里"},{w:"together",z:"一起"},
+    {w:"well",z:"好/井"},{w:"almost",z:"几乎"},{w:"enough",z:"足够"},{w:"even",z:"甚至"},
+    {w:"not",z:"不"},{w:"only",z:"只是"},{w:"quite",z:"相当"},{w:"so",z:"所以"},
+    {w:"very",z:"很"},{w:"tomorrow",z:"明天"},{w:"yesterday",z:"昨天"},
+    {w:"north",z:"北"},{w:"south",z:"南"},{w:"east",z:"东"},{w:"west",z:"西"},
+    {w:"please",z:"请"},{w:"yes",z:"是"}
+  ],
+  general:[
+    {w:"account",z:"账户"},{w:"act",z:"行为"},{w:"addition",z:"增加"},{w:"adjustment",z:"调整"},
+    {w:"advertisement",z:"广告"},{w:"agreement",z:"协议"},{w:"air",z:"空气"},{w:"amount",z:"数量"},
+    {w:"amusement",z:"娱乐"},{w:"animal",z:"动物"},{w:"answer",z:"回答"},{w:"apparatus",z:"器具"},
+    {w:"approval",z:"批准"},{w:"argument",z:"争论"},{w:"art",z:"艺术"},{w:"attack",z:"攻击"},
+    {w:"attempt",z:"尝试"},{w:"attention",z:"注意"},{w:"attraction",z:"吸引"},{w:"authority",z:"权威"},
+    {w:"back",z:"背部"},{w:"balance",z:"平衡"},{w:"base",z:"基础"},{w:"behavior",z:"行为"},
+    {w:"belief",z:"信念"},{w:"birth",z:"出生"},{w:"bit",z:"一点"},{w:"bite",z:"咬"},
+    {w:"blood",z:"血液"},{w:"blow",z:"打击"},{w:"body",z:"身体"},{w:"bread",z:"面包"},
+    {w:"breath",z:"呼吸"},{w:"brother",z:"兄弟"},{w:"building",z:"建筑"},{w:"burn",z:"燃烧"},
+    {w:"business",z:"业务"},{w:"butter",z:"黄油"},{w:"care",z:"关心"},{w:"cause",z:"原因"},
+    {w:"chance",z:"机会"},{w:"change",z:"变化"},{w:"cloth",z:"布料"},{w:"coal",z:"煤"},
+    {w:"color",z:"颜色"},{w:"comfort",z:"舒适"},{w:"company",z:"公司"},{w:"competition",z:"竞争"},
+    {w:"condition",z:"条件"},{w:"control",z:"控制"},{w:"cook",z:"烹饪"},{w:"copy",z:"复制"},
+    {w:"cotton",z:"棉花"},{w:"country",z:"国家"},{w:"cover",z:"封面"},{w:"credit",z:"信用"},
+    {w:"crime",z:"犯罪"},{w:"cry",z:"哭"},{w:"damage",z:"损害"},{w:"danger",z:"危险"},
+    {w:"daughter",z:"女儿"},{w:"day",z:"天"},{w:"death",z:"死亡"},{w:"decision",z:"决定"},
+    {w:"degree",z:"程度"},{w:"design",z:"设计"},{w:"desire",z:"渴望"},{w:"detail",z:"细节"},
+    {w:"development",z:"发展"},{w:"direction",z:"方向"},{w:"discovery",z:"发现"},{w:"discussion",z:"讨论"},
+    {w:"disease",z:"疾病"},{w:"distance",z:"距离"},{w:"doubt",z:"怀疑"},{w:"drink",z:"饮料"},
+    {w:"dust",z:"灰尘"},{w:"earth",z:"地球"},{w:"edge",z:"边缘"},{w:"education",z:"教育"},
+    {w:"effect",z:"效果"},{w:"end",z:"结束"},{w:"error",z:"错误"},{w:"event",z:"事件"},
+    {w:"example",z:"例子"},{w:"experience",z:"经验"},{w:"expert",z:"专家"},{w:"fact",z:"事实"},
+    {w:"fall",z:"跌落"},{w:"family",z:"家庭"},{w:"father",z:"父亲"},{w:"fear",z:"恐惧"},
+    {w:"feeling",z:"感觉"},{w:"field",z:"田野"},{w:"fight",z:"战斗"},{w:"fire",z:"火"},
+    {w:"flight",z:"飞行"},{w:"flower",z:"花"},{w:"food",z:"食物"},{w:"force",z:"力量"},
+    {w:"form",z:"形式"},{w:"friend",z:"朋友"},{w:"fruit",z:"水果"},{w:"glass",z:"玻璃"},
+    {w:"gold",z:"金子"},{w:"government",z:"政府"},{w:"grass",z:"草"},{w:"group",z:"群组"},
+    {w:"growth",z:"成长"},{w:"guide",z:"向导"},{w:"hate",z:"仇恨"},{w:"heat",z:"热量"},
+    {w:"help",z:"帮助"},{w:"history",z:"历史"},{w:"hole",z:"洞"},{w:"hope",z:"希望"},
+    {w:"hour",z:"小时"},{w:"humor",z:"幽默"},{w:"ice",z:"冰"},{w:"idea",z:"想法"},
+    {w:"increase",z:"增加"},{w:"industry",z:"工业"},{w:"ink",z:"墨水"},{w:"insect",z:"昆虫"},
+    {w:"interest",z:"兴趣"},{w:"invention",z:"发明"},{w:"iron",z:"铁"},{w:"join",z:"加入"},
+    {w:"journey",z:"旅途"},{w:"jump",z:"跳跃"},{w:"kick",z:"踢"},{w:"kiss",z:"亲吻"},
+    {w:"knowledge",z:"知识"},{w:"land",z:"土地"},{w:"language",z:"语言"},{w:"laugh",z:"笑"},
+    {w:"law",z:"法律"},{w:"learning",z:"学习"},{w:"letter",z:"信件"},{w:"level",z:"水平"},
+    {w:"light",z:"光"},{w:"limit",z:"限制"},{w:"list",z:"列表"},{w:"look",z:"看"},
+    {w:"loss",z:"损失"},{w:"love",z:"爱"},{w:"machine",z:"机器"},{w:"man",z:"男人"},
+    {w:"market",z:"市场"},{w:"meal",z:"一餐"},{w:"measure",z:"测量"},{w:"meat",z:"肉"},
+    {w:"meeting",z:"会议"},{w:"memory",z:"记忆"},{w:"metal",z:"金属"},{w:"milk",z:"牛奶"},
+    {w:"mind",z:"思维"},{w:"minute",z:"分钟"},{w:"money",z:"钱"},{w:"month",z:"月份"},
+    {w:"morning",z:"早晨"},{w:"mother",z:"母亲"},{w:"mountain",z:"山"},{w:"move",z:"移动"},
+    {w:"music",z:"音乐"},{w:"name",z:"名字"},{w:"nation",z:"国家"},{w:"need",z:"需要"},
+    {w:"news",z:"新闻"},{w:"night",z:"夜晚"},{w:"noise",z:"噪音"},{w:"note",z:"笔记"},
+    {w:"number",z:"数字"},{w:"offer",z:"提供"},{w:"oil",z:"油"},{w:"opinion",z:"意见"},
+    {w:"order",z:"命令"},{w:"organization",z:"组织"},{w:"pain",z:"疼痛"},{w:"paper",z:"纸张"},
+    {w:"part",z:"部分"},{w:"payment",z:"付款"},{w:"peace",z:"和平"},{w:"person",z:"人"},
+    {w:"place",z:"地方"},{w:"plant",z:"植物"},{w:"play",z:"玩耍"},{w:"pleasure",z:"快乐"},
+    {w:"point",z:"要点"},{w:"poison",z:"毒药"},{w:"position",z:"位置"},{w:"power",z:"力量"},
+    {w:"price",z:"价格"},{w:"process",z:"过程"},{w:"profit",z:"利润"},{w:"property",z:"财产"},
+    {w:"protest",z:"抗议"},{w:"pull",z:"拉"},{w:"purpose",z:"目的"},{w:"push",z:"推"},
+    {w:"quality",z:"质量"},{w:"question",z:"问题"},{w:"rain",z:"雨"},{w:"rate",z:"比率"},
+    {w:"reaction",z:"反应"},{w:"reason",z:"原因"},{w:"record",z:"记录"},{w:"regret",z:"遗憾"},
+    {w:"relation",z:"关系"},{w:"request",z:"请求"},{w:"respect",z:"尊重"},{w:"rest",z:"休息"},
+    {w:"reward",z:"奖励"},{w:"rice",z:"米饭"},{w:"river",z:"河流"},{w:"road",z:"道路"},
+    {w:"room",z:"房间"},{w:"rule",z:"规则"},{w:"run",z:"跑"},{w:"salt",z:"盐"},
+    {w:"sand",z:"沙子"},{w:"science",z:"科学"},{w:"sea",z:"海洋"},{w:"seat",z:"座位"},
+    {w:"selection",z:"选择"},{w:"sense",z:"感觉"},{w:"side",z:"侧面"},{w:"sign",z:"标志"},
+    {w:"silver",z:"银"},{w:"sister",z:"姐妹"},{w:"size",z:"大小"},{w:"sky",z:"天空"},
+    {w:"sleep",z:"睡眠"},{w:"smell",z:"气味"},{w:"smile",z:"微笑"},{w:"smoke",z:"烟"},
+    {w:"snow",z:"雪"},{w:"society",z:"社会"},{w:"son",z:"儿子"},{w:"song",z:"歌曲"},
+    {w:"sound",z:"声音"},{w:"soup",z:"汤"},{w:"space",z:"空间"},{w:"stage",z:"舞台"},
+    {w:"start",z:"开始"},{w:"steam",z:"蒸汽"},{w:"steel",z:"钢铁"},{w:"step",z:"步骤"},
+    {w:"stone",z:"石头"},{w:"stop",z:"停止"},{w:"story",z:"故事"},{w:"structure",z:"结构"},
+    {w:"sugar",z:"糖"},{w:"summer",z:"夏天"},{w:"support",z:"支持"},{w:"surprise",z:"惊喜"},
+    {w:"swim",z:"游泳"},{w:"system",z:"系统"},{w:"talk",z:"交谈"},{w:"taste",z:"味道"},
+    {w:"tax",z:"税"},{w:"teaching",z:"教学"},{w:"test",z:"测试"},{w:"theory",z:"理论"},
+    {w:"thing",z:"事物"},{w:"thought",z:"想法"},{w:"time",z:"时间"},{w:"top",z:"顶部"},
+    {w:"touch",z:"触摸"},{w:"trade",z:"贸易"},{w:"transport",z:"运输"},{w:"trouble",z:"麻烦"},
+    {w:"turn",z:"转动"},{w:"use",z:"使用"},{w:"value",z:"价值"},{w:"view",z:"观点"},
+    {w:"voice",z:"声音"},{w:"walk",z:"走路"},{w:"war",z:"战争"},{w:"wash",z:"洗"},
+    {w:"waste",z:"浪费"},{w:"water",z:"水"},{w:"wave",z:"波浪"},{w:"way",z:"方式"},
+    {w:"weather",z:"天气"},{w:"week",z:"星期"},{w:"weight",z:"重量"},{w:"wind",z:"风"},
+    {w:"wine",z:"葡萄酒"},{w:"winter",z:"冬天"},{w:"woman",z:"女人"},{w:"wood",z:"木头"},
+    {w:"word",z:"单词"},{w:"work",z:"工作"},{w:"writing",z:"写作"},{w:"year",z:"年"}
+  ],
+  picturable:[
+    {w:"apple",z:"苹果"},{w:"arm",z:"手臂"},{w:"baby",z:"婴儿"},{w:"bag",z:"包"},
+    {w:"ball",z:"球"},{w:"basket",z:"篮子"},{w:"bath",z:"浴缸"},{w:"bed",z:"床"},
+    {w:"bee",z:"蜜蜂"},{w:"bell",z:"钟"},{w:"bird",z:"鸟"},{w:"board",z:"木板"},
+    {w:"boat",z:"船"},{w:"bone",z:"骨头"},{w:"book",z:"书"},{w:"boot",z:"靴子"},
+    {w:"bottle",z:"瓶子"},{w:"box",z:"盒子"},{w:"boy",z:"男孩"},{w:"brain",z:"大脑"},
+    {w:"branch",z:"树枝"},{w:"bridge",z:"桥"},{w:"brush",z:"刷子"},{w:"bucket",z:"桶"},
+    {w:"bulb",z:"灯泡"},{w:"button",z:"按钮"},{w:"cake",z:"蛋糕"},{w:"camera",z:"相机"},
+    {w:"card",z:"卡片"},{w:"cat",z:"猫"},{w:"chain",z:"链条"},{w:"cheese",z:"奶酪"},
+    {w:"chin",z:"下巴"},{w:"church",z:"教堂"},{w:"circle",z:"圆圈"},{w:"clock",z:"时钟"},
+    {w:"cloud",z:"云"},{w:"coat",z:"外套"},{w:"comb",z:"梳子"},{w:"cow",z:"奶牛"},
+    {w:"cup",z:"杯子"},{w:"curtain",z:"窗帘"},{w:"dog",z:"狗"},{w:"door",z:"门"},
+    {w:"drawer",z:"抽屉"},{w:"dress",z:"连衣裙"},{w:"drop",z:"水滴"},{w:"ear",z:"耳朵"},
+    {w:"egg",z:"鸡蛋"},{w:"engine",z:"引擎"},{w:"eye",z:"眼睛"},{w:"face",z:"脸"},
+    {w:"farm",z:"农场"},{w:"feather",z:"羽毛"},{w:"finger",z:"手指"},{w:"fish",z:"鱼"},
+    {w:"flag",z:"旗帜"},{w:"floor",z:"地板"},{w:"fly",z:"苍蝇"},{w:"foot",z:"脚"},
+    {w:"fork",z:"叉子"},{w:"garden",z:"花园"},{w:"girl",z:"女孩"},{w:"glove",z:"手套"},
+    {w:"goat",z:"山羊"},{w:"gun",z:"枪"},{w:"hair",z:"头发"},{w:"hammer",z:"锤子"},
+    {w:"hand",z:"手"},{w:"hat",z:"帽子"},{w:"head",z:"头"},{w:"heart",z:"心脏"},
+    {w:"hook",z:"钩子"},{w:"horse",z:"马"},{w:"hospital",z:"医院"},{w:"house",z:"房子"},
+    {w:"island",z:"岛屿"},{w:"kettle",z:"水壶"},{w:"key",z:"钥匙"},{w:"knee",z:"膝盖"},
+    {w:"knife",z:"刀"},{w:"leaf",z:"叶子"},{w:"leg",z:"腿"},{w:"library",z:"图书馆"},
+    {w:"lip",z:"嘴唇"},{w:"lock",z:"锁"},{w:"map",z:"地图"},{w:"match",z:"火柴"},
+    {w:"monkey",z:"猴子"},{w:"moon",z:"月亮"},{w:"mouth",z:"嘴"},{w:"muscle",z:"肌肉"},
+    {w:"nail",z:"钉子"},{w:"neck",z:"脖子"},{w:"needle",z:"针"},{w:"net",z:"网"},
+    {w:"nose",z:"鼻子"},{w:"nut",z:"坚果"},{w:"office",z:"办公室"},{w:"orange",z:"橙子"},
+    {w:"oven",z:"烤箱"},{w:"pen",z:"钢笔"},{w:"pencil",z:"铅笔"},{w:"picture",z:"图片"},
+    {w:"pig",z:"猪"},{w:"pin",z:"大头针"},{w:"pipe",z:"管道"},{w:"plane",z:"飞机"},
+    {w:"plate",z:"盘子"},{w:"pocket",z:"口袋"},{w:"pot",z:"锅"},{w:"potato",z:"土豆"},
+    {w:"rat",z:"老鼠"},{w:"ring",z:"戒指"},{w:"roof",z:"屋顶"},{w:"root",z:"根"},
+    {w:"school",z:"学校"},{w:"scissors",z:"剪刀"},{w:"seed",z:"种子"},{w:"sheep",z:"羊"},
+    {w:"shelf",z:"架子"},{w:"ship",z:"轮船"},{w:"shirt",z:"衬衫"},{w:"shoe",z:"鞋子"},
+    {w:"skin",z:"皮肤"},{w:"skirt",z:"裙子"},{w:"snake",z:"蛇"},{w:"sock",z:"袜子"},
+    {w:"spoon",z:"勺子"},{w:"stamp",z:"邮票"},{w:"star",z:"星星"},{w:"station",z:"车站"},
+    {w:"stick",z:"棍子"},{w:"stomach",z:"胃"},{w:"store",z:"商店"},{w:"street",z:"街道"},
+    {w:"sun",z:"太阳"},{w:"table",z:"桌子"},{w:"tail",z:"尾巴"},{w:"throat",z:"喉咙"},
+    {w:"thumb",z:"拇指"},{w:"ticket",z:"票"},{w:"toe",z:"脚趾"},{w:"tongue",z:"舌头"},
+    {w:"tooth",z:"牙齿"},{w:"town",z:"小镇"},{w:"train",z:"火车"},{w:"tray",z:"托盘"},
+    {w:"tree",z:"树"},{w:"trousers",z:"裤子"},{w:"umbrella",z:"雨伞"},{w:"wall",z:"墙"},
+    {w:"watch",z:"手表"},{w:"wheel",z:"轮子"},{w:"whistle",z:"口哨"},{w:"window",z:"窗户"},
+    {w:"wing",z:"翅膀"},{w:"wire",z:"电线"},{w:"worm",z:"虫子"}
+  ],
+  qualities:[
+    {w:"able",z:"能够"},{w:"angry",z:"生气的"},{w:"beautiful",z:"美丽的"},{w:"black",z:"黑色"},
+    {w:"bright",z:"明亮的"},{w:"broken",z:"破碎的"},{w:"brown",z:"棕色"},{w:"cheap",z:"便宜的"},
+    {w:"chief",z:"主要的"},{w:"clean",z:"干净的"},{w:"clear",z:"清晰的"},{w:"common",z:"普通的"},
+    {w:"complex",z:"复杂的"},{w:"conscious",z:"有意识的"},{w:"deep",z:"深的"},{w:"early",z:"早的"},
+    {w:"electric",z:"电的"},{w:"equal",z:"相等的"},{w:"fat",z:"胖的"},{w:"first",z:"第一"},
+    {w:"flat",z:"平的"},{w:"free",z:"自由的"},{w:"full",z:"满的"},{w:"good",z:"好的"},
+    {w:"great",z:"伟大的"},{w:"grey",z:"灰色"},{w:"happy",z:"快乐的"},{w:"hard",z:"硬的"},
+    {w:"healthy",z:"健康的"},{w:"high",z:"高的"},{w:"important",z:"重要的"},{w:"kind",z:"善良的"},
+    {w:"long",z:"长的"},{w:"natural",z:"自然的"},{w:"necessary",z:"必要的"},{w:"new",z:"新的"},
+    {w:"normal",z:"正常的"},{w:"open",z:"开着的"},{w:"physical",z:"身体的"},{w:"poor",z:"贫穷的"},
+    {w:"possible",z:"可能的"},{w:"private",z:"私人的"},{w:"quick",z:"快速的"},{w:"quiet",z:"安静的"},
+    {w:"ready",z:"准备好的"},{w:"red",z:"红色"},{w:"regular",z:"规律的"},{w:"right",z:"正确的"},
+    {w:"round",z:"圆的"},{w:"same",z:"相同的"},{w:"serious",z:"严肃的"},{w:"sharp",z:"锋利的"},
+    {w:"smooth",z:"光滑的"},{w:"straight",z:"直的"},{w:"strong",z:"强壮的"},{w:"sweet",z:"甜的"},
+    {w:"tall",z:"高的"},{w:"thick",z:"厚的"},{w:"tight",z:"紧的"},{w:"tired",z:"疲倦的"},
+    {w:"true",z:"真实的"},{w:"warm",z:"温暖的"},{w:"wet",z:"湿的"},{w:"wide",z:"宽的"},
+    {w:"wise",z:"聪明的"},{w:"yellow",z:"黄色"},{w:"young",z:"年轻的"},{w:"bad",z:"坏的"},
+    {w:"bitter",z:"苦的"},{w:"blue",z:"蓝色"},{w:"certain",z:"确定的"},{w:"cold",z:"冷的"},
+    {w:"complete",z:"完整的"},{w:"cruel",z:"残忍的"},{w:"dark",z:"暗的"},{w:"dead",z:"死的"},
+    {w:"dear",z:"亲爱的"},{w:"different",z:"不同的"},{w:"dirty",z:"脏的"},{w:"dry",z:"干燥的"},
+    {w:"false",z:"错误的"},{w:"female",z:"女性"},{w:"foolish",z:"愚蠢的"},{w:"green",z:"绿色"},
+    {w:"ill",z:"生病的"},{w:"last",z:"最后的"},{w:"late",z:"晚的"},{w:"left",z:"左边"},
+    {w:"loose",z:"松散的"},{w:"loud",z:"大声的"},{w:"low",z:"低的"},{w:"narrow",z:"狭窄的"},
+    {w:"old",z:"旧的"},{w:"opposite",z:"对面的"},{w:"public",z:"公共的"},{w:"rough",z:"粗糙的"},
+    {w:"sad",z:"悲伤的"},{w:"safe",z:"安全的"},{w:"secret",z:"秘密的"},{w:"short",z:"短的"},
+    {w:"simple",z:"简单的"},{w:"slow",z:"慢的"},{w:"small",z:"小的"},{w:"soft",z:"软的"},
+    {w:"special",z:"特别的"},{w:"strange",z:"奇怪的"},{w:"thin",z:"薄的"},{w:"white",z:"白色"},
+    {w:"wrong",z:"错误的"}
+  ]
+};
+
+const ALL_WORDS=[
+  ...WORDS.operations.map(w=>({...w,cat:'operations'})),
+  ...WORDS.general.map(w=>({...w,cat:'general'})),
+  ...WORDS.picturable.map(w=>({...w,cat:'picturable'})),
+  ...WORDS.qualities.map(w=>({...w,cat:'qualities'}))
+];
+
+const CONTEXTS=[
+  "朋友之间日常闲聊","在咖啡店或餐厅","和室友在家里","在超市购物",
+  "工作场所与同事对话","描述今天发生的事","表达个人喜好或感受","在公园或街头",
+  "打电话给朋友","早晨起床的日常"
+];
+
+// ── STATE ──
+let learnedWords=JSON.parse(localStorage.getItem('learned850')||'[]');
+let practiceCount=parseInt(localStorage.getItem('practiceCount850')||'0');
+let currentCategory='all';
+let currentWord=null;
+let practiceQueue=[];
+let practiceIndex=0;
+let tokens=[];         // 当前句子的词数组
+let tokenIndex=0;      // 当前要输入的词下标
+let tokenStates=[];    // 'pending'|'correct'|'wrong'|'hint-shown'
+let tokenTyped=[];     // 用户实际输入的内容（用于显示错误）
+let practiceMode='word'; // 'word' | 'full'
+let currentSentence='';
+let currentSentenceZh='';
+let hintCount=0;
+let speechSpeed=0.8;
+// 离线版无需 apiKey
+let panelWordText='';
+let panelZhText='';
+let currentPanelSentence='';
+
+// Audio context for sound effects
+let audioCtx=null;
+function getAudioCtx(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+
+function playSuccess(){
+  try{
+    const ctx=getAudioCtx();
+    const freqs=[523,659,784,1047];
+    freqs.forEach((f,i)=>{
+      const osc=ctx.createOscillator();
+      const gain=ctx.createGain();
+      osc.connect(gain);gain.connect(ctx.destination);
+      osc.frequency.value=f;osc.type='sine';
+      gain.gain.setValueAtTime(0,ctx.currentTime+i*0.1);
+      gain.gain.linearRampToValueAtTime(0.18,ctx.currentTime+i*0.1+0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+i*0.1+0.25);
+      osc.start(ctx.currentTime+i*0.1);
+      osc.stop(ctx.currentTime+i*0.1+0.25);
+    });
+  }catch(e){}
+}
+
+function playError(){
+  try{
+    const ctx=getAudioCtx();
+    const osc=ctx.createOscillator();
+    const gain=ctx.createGain();
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.frequency.value=220;osc.type='sawtooth';
+    gain.gain.setValueAtTime(0.15,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.3);
+    osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.3);
+  }catch(e){}
+}
+
+function playTick(){
+  try{
+    const ctx=getAudioCtx();
+    const osc=ctx.createOscillator();
+    const gain=ctx.createGain();
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.frequency.value=800;osc.type='sine';
+    gain.gain.setValueAtTime(0.08,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.08);
+    osc.start(ctx.currentTime);osc.stop(ctx.currentTime+0.08);
+  }catch(e){}
+}
+
+// confetti
+function launchConfetti(){
+  const canvas=document.getElementById('confetti-canvas');
+  canvas.style.display='block';
+  canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+  const ctx=canvas.getContext('2d');
+  const particles=Array.from({length:80},()=>({
+    x:Math.random()*canvas.width,y:Math.random()*-100,
+    vx:(Math.random()-0.5)*4,vy:Math.random()*4+2,
+    color:['#e8c84a','#5fe0a0','#f07060','#60b0f0','#d060f0'][Math.floor(Math.random()*5)],
+    size:Math.random()*8+4,rot:Math.random()*360,vrot:(Math.random()-0.5)*8
+  }));
+  let frame=0;
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;p.rot+=p.vrot;
+      ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle=p.color;ctx.fillRect(-p.size/2,-p.size/4,p.size,p.size/2);
+      ctx.restore();
+    });
+    frame++;
+    if(frame<80)requestAnimationFrame(draw);
+    else{ctx.clearRect(0,0,canvas.width,canvas.height);canvas.style.display='none';}
+  }
+  draw();
+}
+
+// ── VOCAB ──
+updateStats();renderWords();
+
+function updateStats(){
+  document.getElementById('learned-count').textContent=learnedWords.length;
+  document.getElementById('practice-count').textContent=practiceCount;
+  document.getElementById('unlearned-count').textContent=850-learnedWords.length;
+  document.getElementById('learned-sidebar').textContent=learnedWords.length;
+}
+
+function switchTab(tab){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',(i===0&&tab==='vocab')||(i===1&&tab==='practice')));
+  document.getElementById('tab-vocab').classList.toggle('active',tab==='vocab');
+  document.getElementById('tab-practice').classList.toggle('active',tab==='practice');
+
+}
+
+function selectCategory(cat){
+  currentCategory=cat;
+  document.querySelectorAll('.category-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('cat-'+cat)?.classList.add('active');
+  const labels={all:'全部词汇',operations:'操作词',general:'通用词',picturable:'图画词',qualities:'形容词',learned:'已学习',unlearned:'未学习'};
+  const counts={all:850,operations:100,general:400,picturable:200,qualities:150,learned:learnedWords.length,unlearned:850-learnedWords.length};
+  document.getElementById('section-title').textContent=labels[cat]||cat;
+  document.getElementById('section-sub').textContent=(counts[cat]||'')+' 个词';
+  filterWords();
+}
+
+function filterWords(){
+  const q=document.getElementById('search-input').value.trim().toLowerCase();
+  let list=currentCategory==='all'?ALL_WORDS:currentCategory==='learned'?ALL_WORDS.filter(w=>learnedWords.includes(w.w)):currentCategory==='unlearned'?ALL_WORDS.filter(w=>!learnedWords.includes(w.w)):ALL_WORDS.filter(w=>w.cat===currentCategory);
+  if(q)list=list.filter(w=>w.w.includes(q)||w.z.includes(q));
+  renderWordGrid(list);
+}
+function renderWords(){filterWords();}
+
+function renderWordGrid(list){
+  const grid=document.getElementById('word-grid');
+  if(!list.length){grid.innerHTML='<div style="color:var(--dim);font-size:14px;padding:20px;">没有找到匹配的单词</div>';return;}
+  grid.innerHTML=list.map(w=>`<div class="word-card ${learnedWords.includes(w.w)?'learned':''}" onclick="openPanel('${w.w}','${w.z}','${w.cat}')"><div class="word-en">${w.w}</div><div class="word-zh">${w.z}</div></div>`).join('');
+}
+
+// ── SPEECH ──
+function setSpeed(speed,btn,btnId){
+  speechSpeed=speed;
+  // clear all speed active states
+  ['spd-slow','spd-normal','spd-fast'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.classList.remove('speed-active');
+  });
+  if(btnId){
+    const el=document.getElementById(btnId);
+    if(el)el.classList.add('speed-active');
+  } else if(btn){
+    btn.classList.add('speed-active');
+  }
+}
+
+// ── 语音：Google TTS（清晰标准），失败时降级到浏览器内置 ──
+let currentAudio=null;
+
+function speak(text,btnId){
+  if(currentAudio){currentAudio.pause();currentAudio=null;}
+  const btn=btnId?document.getElementById(btnId):null;
+  if(btn)btn.classList.add('speaking');
+  // Google TTS 公开接口，美式英语，发音标准清晰
+  const lang='en-US';
+  const url=`https://translate.googleapis.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${lang}&client=gtx&ttsspeed=${speechSpeed}`;
+  const audio=new Audio(url);
+  currentAudio=audio;
+  audio.playbackRate=speechSpeed;
+  audio.onended=()=>{if(btn)btn.classList.remove('speaking');currentAudio=null;};
+  audio.onerror=()=>{
+    // Google TTS 失败时降级到浏览器内置语音
+    currentAudio=null;
+    if(btn)btn.classList.remove('speaking');
+    speakFallback(text,btnId);
+  };
+  audio.play().catch(()=>{
+    currentAudio=null;
+    if(btn)btn.classList.remove('speaking');
+    speakFallback(text,btnId);
+  });
+}
+
+function speakFallback(text,btnId){
+  if(!window.speechSynthesis)return;
+  window.speechSynthesis.cancel();
+  const utt=new SpeechSynthesisUtterance(text);
+  utt.lang='en-US';utt.rate=speechSpeed;utt.pitch=1;
+  const voices=window.speechSynthesis.getVoices();
+  // 优先级：Samantha(Mac) > Daniel > 任意en-US > 任意en
+  const v=voices.find(v=>v.name==='Samantha')
+    ||voices.find(v=>v.name==='Daniel')
+    ||voices.find(v=>v.lang==='en-US')
+    ||voices.find(v=>v.lang.startsWith('en'));
+  if(v)utt.voice=v;
+  const btn=btnId?document.getElementById(btnId):null;
+  if(btn){btn.classList.add('speaking');utt.onend=()=>btn.classList.remove('speaking');utt.onerror=()=>btn.classList.remove('speaking');}
+  window.speechSynthesis.speak(utt);
+}
+
+function speakCurrent(){speak(currentSentence,'speak-btn');}
+function speakPanel(){if(currentPanelSentence)speak(currentPanelSentence,'panel-speak-btn');}
+
+// ── PANEL ──
+function openPanel(word,zh,cat){
+  panelWordText=word;panelZhText=zh;currentPanelSentence='';
+  document.getElementById('panel-word').textContent=word;
+  document.getElementById('panel-def').textContent=zh;
+  document.getElementById('panel-loading').style.display='block';
+  document.getElementById('panel-loading').textContent='正在生成例句…';
+  document.getElementById('panel-sentence-wrap').style.display='none';
+  document.getElementById('panel-speak-btn').style.display='none';
+  document.getElementById('learned-toggle').textContent=learnedWords.includes(word)?'取消已学':'标记已学';
+  document.getElementById('panel-overlay').classList.add('open');
+  fetchPanelSentence(word,zh);
+}
+
+function fetchPanelSentence(word,zh){
+  const w=word.toLowerCase();
+  const entry=SENTENCE_DB[w]||SENTENCE_DB[word];
+  document.getElementById('panel-loading').style.display='none';
+  if(entry){
+    const en=entry[0];
+    // highlight target word in sentence
+    const re=new RegExp('\\b'+word+'\\b','gi');
+    const highlighted=en.replace(re,`<em>${word}</em>`);
+    document.getElementById('panel-sentence-wrap').style.display='block';
+    document.getElementById('panel-sentence').innerHTML=highlighted;
+    document.getElementById('panel-sentence-zh').textContent=entry[1];
+    currentPanelSentence=en;
+    document.getElementById('panel-speak-btn').style.display='inline-flex';
+  }else{
+    document.getElementById('panel-loading').textContent='暂无例句';
+    document.getElementById('panel-loading').style.display='block';
+  }
+}
+
+function closePanel(e){if(e.target===document.getElementById('panel-overlay'))closePanelDirect();}
+function closePanelDirect(){document.getElementById('panel-overlay').classList.remove('open');window.speechSynthesis?.cancel();}
+
+function toggleLearned(){
+  if(learnedWords.includes(panelWordText))learnedWords=learnedWords.filter(w=>w!==panelWordText);
+  else learnedWords.push(panelWordText);
+  localStorage.setItem('learned850',JSON.stringify(learnedWords));
+  document.getElementById('learned-toggle').textContent=learnedWords.includes(panelWordText)?'取消已学':'标记已学';
+  updateStats();filterWords();
+}
+
+function practiceThisWord(){
+  closePanelDirect();switchTab('practice');
+  const wo=ALL_WORDS.find(w=>w.w===panelWordText);
+  if(wo){practiceQueue=[wo];practiceIndex=0;startPractice(true);}
+}
+
+// 纯离线版，无需 API Key
+
+// ── PRACTICE CORE ──
+function startPractice(withQueue){
+  document.getElementById('practice-start').style.display='none';
+  document.getElementById('practice-empty').style.display='none';
+  if(!withQueue){
+    const unlearned=ALL_WORDS.filter(w=>!learnedWords.includes(w.w));
+    const pool=unlearned.length>0?unlearned:ALL_WORDS;
+    practiceQueue=shuffle(pool).slice(0,10);practiceIndex=0;
+  }
+  document.getElementById('progress-wrap').style.display='flex';
+  updateProgress();loadPracticeWord();
+}
+
+function updateProgress(){
+  const total=practiceQueue.length,done=practiceIndex;
+  document.getElementById('progress-fill').style.width=(done/total*100)+'%';
+  document.getElementById('progress-text').textContent=done+' / '+total;
+}
+
+async function loadPracticeWord(){
+  if(practiceIndex>=practiceQueue.length){
+    ['p-word-card','sentence-box','feedback-row','btn-row','mode-toggle'].forEach(id=>document.getElementById(id).style.display='none');
+    document.getElementById('practice-empty').style.display='block';return;
+  }
+  currentWord=practiceQueue[practiceIndex];
+  window.speechSynthesis?.cancel();
+  document.getElementById('p-word').textContent=currentWord.w;
+  document.getElementById('p-zh').textContent=currentWord.z;
+  document.getElementById('p-word-card').style.display='block';
+  document.getElementById('sentence-box').style.display='none';
+  document.getElementById('feedback-row').style.display='none';
+  document.getElementById('btn-row').style.display='none';
+  document.getElementById('loading-bar').classList.add('active');
+  document.getElementById('loading-msg').classList.add('active');
+  updateProgress();
+  await fetchSentence(currentWord);
+}
+
+
+const SENTENCE_DB={
+  "I": ["I have no idea what to do tonight.", "我完全不知道今晚要做什么。"],
+  "a": ["Let's take a quick break.", "我们休息一下吧。"],
+  "able": ["I was finally able to fix the issue.", "我终于能够解决这个问题了。"],
+  "about": ["What's this meeting about anyway?", "这个会议到底是关于什么的？"],
+  "account": ["My bank account is looking pretty sad right now.", "我的银行账户现在看起来很惨。"],
+  "acid": ["That lemon is so acid it made my eyes water.", "那个柠檬酸得我眼睛都流泪了。"],
+  "across": ["There's a great ramen place across the street.", "街对面有家很棒的拉面店。"],
+  "act": ["You need to act fast before the deal closes.", "你需要在交易结束前快速行动。"],
+  "addition": ["In addition, we need to confirm the time.", "另外，我们还需要确认时间。"],
+  "adjustment": ["Just a small adjustment and it'll be perfect.", "只需要小小调整一下就完美了。"],
+  "advertisement": ["That advertisement has been stuck in my head all day.", "那个广告在我脑子里转了一整天。"],
+  "after": ["Want to grab a drink after work?", "下班后要不要去喝一杯？"],
+  "again": ["Sorry, can you say that again?", "不好意思，你能再说一遍吗？"],
+  "against": ["I'm totally against the idea, honestly.", "说实话，我完全反对这个想法。"],
+  "agreement": ["We finally reached an agreement, thank goodness.", "我们终于达成协议了，谢天谢地。"],
+  "air": ["The air is so fresh out here after the rain.", "下雨后外面的空气好清新。"],
+  "all": ["We've been stuck in meetings all morning.", "我们整个上午都在开会。"],
+  "almost": ["I almost missed the last train.", "我差点没赶上最后一班车。"],
+  "among": ["She's easily the best among the whole group.", "她在整个团队里绝对是最优秀的。"],
+  "amount": ["The amount on my credit card bill is terrifying.", "我信用卡账单上的金额真的很吓人。"],
+  "amusement": ["She tried to hide her amusement but failed.", "她想掩饰自己的忍俊不禁，但没成功。"],
+  "and": ["I grabbed some groceries and made dinner.", "我买了些食材，做了晚饭。"],
+  "angry": ["I was so angry when I heard what happened.", "我听到发生的事情时非常生气。"],
+  "animal": ["There was a really cute animal at the shelter.", "收容所里有只超可爱的动物。"],
+  "answer": ["I've been waiting for their answer all week.", "我等他们的回复等了一整周了。"],
+  "any": ["Do you have any plans this weekend?", "你这个周末有什么计划吗？"],
+  "apparatus": ["The whole apparatus broke down during the demo.", "整个装置在演示过程中坏掉了。"],
+  "apple": ["I grabbed an apple on my way out.", "我出门时顺手拿了个苹果。"],
+  "approval": ["We're still waiting on approval from upstairs.", "我们还在等上面的批准。"],
+  "argument": ["They got into a huge argument over nothing.", "他们为了一点小事大吵了一架。"],
+  "arm": ["She fell asleep with her arm on the table.", "她手臂搭在桌上睡着了。"],
+  "art": ["I went to a really cool art show last weekend.", "上周末我去看了一个很酷的艺术展。"],
+  "as": ["As far as I know, the plan hasn't changed.", "就我所知，计划没有改变。"],
+  "at": ["I'll meet you at the front entrance.", "我在正门口等你。"],
+  "attack": ["He had a panic attack on the subway.", "他在地铁上恐慌发作了。"],
+  "attempt": ["My attempt at cooking pasta was a disaster.", "我尝试做意大利面以失败告终。"],
+  "attention": ["Pay attention, this part is actually important.", "注意听，这部分其实很重要。"],
+  "attraction": ["The main attraction was the rooftop view.", "最大的亮点是屋顶的景色。"],
+  "authority": ["She has the authority to make that call.", "她有权做那个决定。"],
+  "automatic": ["The door is automatic, just walk up to it.", "门是自动的，走过去就行。"],
+  "awake": ["I've been awake since four, couldn't sleep.", "我从四点就醒了，睡不着。"],
+  "baby": ["They just had a baby, so they're exhausted.", "他们刚生了宝宝，所以精疲力竭。"],
+  "back": ["My back is killing me from sitting all day.", "我坐了一整天，背痛死了。"],
+  "bad": ["That's bad news, I'm sorry to hear it.", "那是个坏消息，很遗憾听到这个。"],
+  "bag": ["I left my bag on the subway, I'm so annoyed.", "我把包落在地铁上了，真的很烦。"],
+  "balance": ["I need to find a better work-life balance.", "我需要找到更好的工作与生活的平衡。"],
+  "ball": ["The kids were kicking a ball around in the park.", "孩子们在公园里踢球。"],
+  "base": ["Let's use this as a base and work from here.", "我们以这个为基础，从这里开始。"],
+  "basket": ["I put all the laundry in the basket.", "我把所有要洗的衣服放进篮子里了。"],
+  "bath": ["I took a long bath and finally relaxed.", "我泡了个长长的澡，终于放松了。"],
+  "be": ["It's going to be a long day.", "今天会是漫长的一天。"],
+  "beautiful": ["The sunset tonight was absolutely beautiful.", "今晚的日落美极了。"],
+  "because": ["I left early because the subway was a mess.", "我早走是因为地铁乱成一团。"],
+  "bed": ["I was in bed by nine, I was so tired.", "我九点就上床了，太累了。"],
+  "bee": ["A bee flew into the apartment, total panic.", "一只蜜蜂飞进公寓，全乱了。"],
+  "before": ["Let's talk before the meeting starts.", "开会前我们先聊一下。"],
+  "behavior": ["His behavior at the party was a little weird.", "他在派对上的行为有点奇怪。"],
+  "belief": ["It's my belief that honesty is always the best policy.", "我相信诚实永远是最好的策略。"],
+  "bell": ["The doorbell just rang, are you expecting someone?", "门铃刚响了，你在等人吗？"],
+  "bent": ["The fork is bent, can I get a new one?", "这把叉子弯了，能换一把吗？"],
+  "between": ["Just between us, I think she's leaving.", "就我们之间说，我觉得她要走了。"],
+  "bird": ["There's a really loud bird outside my window every morning.", "我窗外每天早上都有一只很吵的鸟。"],
+  "birth": ["It was my nephew's birth that changed everything.", "是我侄子的出生改变了一切。"],
+  "bit": ["Just give me a bit more time on this.", "再给我多一点时间处理这个。"],
+  "bite": ["Want to grab a bite before the show?", "演出前要不要去吃点东西？"],
+  "bitter": ["This coffee is a bit bitter, maybe over-extracted.", "这咖啡有点苦，可能过度萃取了。"],
+  "black": ["I need a black pen, do you have one?", "我需要一支黑色笔，你有吗？"],
+  "blood": ["I donate blood every few months.", "我每隔几个月献一次血。"],
+  "blow": ["That news was a real blow for the whole team.", "那个消息对整个团队来说是个很大的打击。"],
+  "blue": ["I've been feeling a little blue lately.", "我最近有点情绪低落。"],
+  "board": ["Can someone write that on the board?", "有人能把那个写在黑板上吗？"],
+  "boat": ["We took a little boat out on the lake.", "我们在湖上划了一会儿小船。"],
+  "body": ["My whole body aches after yesterday's workout.", "昨天锻炼完，全身都酸痛。"],
+  "bone": ["The dog was chewing on a bone all afternoon.", "那只狗整个下午都在啃骨头。"],
+  "book": ["I've been trying to read more books this year.", "我今年一直在努力多读书。"],
+  "boot": ["I need new boots before the snow starts.", "下雪之前我需要买新靴子。"],
+  "bottle": ["There's still half a bottle of water in the fridge.", "冰箱里还有半瓶水。"],
+  "box": ["The box from Amazon finally arrived.", "亚马逊的包裹终于到了。"],
+  "boy": ["That little boy was so polite, it was adorable.", "那个小男孩非常有礼貌，真可爱。"],
+  "brain": ["My brain is completely fried after today.", "今天之后我的大脑完全宕机了。"],
+  "branch": ["A branch fell on the car during the storm.", "暴风雨期间一根树枝掉在车上了。"],
+  "bread": ["I picked up some fresh bread from the bakery.", "我从面包店买了些新鲜面包。"],
+  "breath": ["Take a breath, it's going to be fine.", "深呼吸，会没事的。"],
+  "bridge": ["Let's walk across the bridge, the view is amazing.", "我们走过桥吧，风景很棒。"],
+  "bright": ["She's one of the brightest people I know.", "她是我认识的最聪明的人之一。"],
+  "broken": ["The elevator is broken again, take the stairs.", "电梯又坏了，走楼梯吧。"],
+  "brother": ["My brother is visiting from out of town.", "我哥哥从外地来看我。"],
+  "brown": ["I love that brown leather jacket she was wearing.", "我喜欢她穿的那件棕色皮夹克。"],
+  "brush": ["I need a new toothbrush, mine is worn out.", "我需要换新牙刷了，旧的用坏了。"],
+  "bucket": ["There's a bucket under the leak in the ceiling.", "天花板漏水的地方下面放了个桶。"],
+  "building": ["The building has a rooftop garden, it's lovely.", "这栋楼有个屋顶花园，很漂亮。"],
+  "bulb": ["The light bulb in the bathroom blew out again.", "浴室的灯泡又坏了。"],
+  "burn": ["I burned my tongue on hot coffee again.", "我又被热咖啡烫到舌头了。"],
+  "business": ["Business has been picking up lately.", "最近生意好转了。"],
+  "but": ["I wanted to sleep in but my cat woke me up.", "我想睡懒觉，但我的猫把我叫醒了。"],
+  "butter": ["Do you have butter? I want to make toast.", "你有黄油吗？我想做吐司。"],
+  "button": ["A button fell off my coat.", "我外套上的扣子掉了。"],
+  "by": ["The report needs to be done by Friday.", "报告需要在周五前完成。"],
+  "cake": ["She made a cake for the whole office.", "她为整个办公室做了一个蛋糕。"],
+  "camera": ["I forgot my camera at home, of course.", "我当然把相机落在家里了。"],
+  "card": ["I only have my credit card on me.", "我身上只有信用卡。"],
+  "care": ["Take care of yourself, okay?", "好好照顾自己，好吗？"],
+  "cat": ["My cat knocked everything off the table again.", "我的猫又把桌上的东西全推下去了。"],
+  "cause": ["What caused all the delay this morning?", "今早什么原因导致了那么多延误？"],
+  "certain": ["I'm not a hundred percent certain, but I think so.", "我不是百分之百确定，但我觉得是的。"],
+  "chain": ["The bike chain came off on my way here.", "我来这里的路上自行车链条掉了。"],
+  "chance": ["I think you should take the chance.", "我觉得你应该抓住这个机会。"],
+  "change": ["I need to change before we go out.", "我们出门前我需要换件衣服。"],
+  "cheap": ["That restaurant is surprisingly cheap and good.", "那家餐厅出乎意料地便宜又好吃。"],
+  "cheese": ["Is there any cheese left in the fridge?", "冰箱里还有奶酪吗？"],
+  "chemical": ["There's a strange chemical smell from next door.", "隔壁传来一股奇怪的化学气味。"],
+  "chief": ["The chief concern right now is the deadline.", "现在主要的担忧是截止日期。"],
+  "chin": ["He rested his chin on his hand and thought.", "他用手托着下巴思考着。"],
+  "church": ["The church near my place has really beautiful bells.", "我住处附近的教堂钟声非常悦耳。"],
+  "circle": ["Let's sit in a circle so everyone can see.", "我们围成一圈坐，这样大家都能看到。"],
+  "clean": ["The apartment was spotlessly clean when we moved in.", "我们搬进来的时候公寓一尘不染。"],
+  "clear": ["Let me be clear about what happened.", "让我说清楚发生了什么。"],
+  "clock": ["The clock on the wall has been wrong all week.", "墙上的钟整周都是错的时间。"],
+  "cloth": ["I spilled coffee on my cloth bag.", "我把咖啡洒在我的布袋上了。"],
+  "cloud": ["Those clouds look pretty dark, bring an umbrella.", "那些云看着挺黑的，带把伞吧。"],
+  "coal": ["The old building still runs on coal heating.", "那栋老楼还在用煤供暖。"],
+  "coat": ["Don't forget your coat, it's really cold.", "别忘了带外套，真的很冷。"],
+  "cold": ["It's so cold I can see my breath.", "冷得我能看到自己呼出的白气。"],
+  "color": ["That color looks really good on you.", "那个颜色穿在你身上很好看。"],
+  "comb": ["Has anyone seen my comb? I can't find it.", "有人看到我的梳子吗？我找不到了。"],
+  "come": ["Come on, we're going to be late.", "快点，我们要迟到了。"],
+  "comfort": ["There's real comfort in a hot bowl of soup.", "一碗热汤真的很有安慰作用。"],
+  "common": ["It's actually really common here.", "这在这里其实很常见。"],
+  "company": ["I'm glad to have the company, it's been a quiet week.", "有人陪真好，这周太安静了。"],
+  "competition": ["The competition this year is way tougher.", "今年的竞争激烈多了。"],
+  "complete": ["The renovation is finally complete.", "装修终于完成了。"],
+  "complex": ["The situation is more complex than it looks.", "这种情况比看起来复杂多了。"],
+  "condition": ["The condition of the apartment is actually pretty good.", "这套公寓的状况其实相当不错。"],
+  "conscious": ["I'm really conscious about how much I'm spending.", "我对自己的花销非常有意识。"],
+  "control": ["I couldn't control myself and ordered dessert.", "我忍不住点了甜点。"],
+  "cook": ["I've been trying to cook more at home lately.", "我最近一直在尝试多在家做饭。"],
+  "copy": ["Can you make a copy of this for me?", "你能帮我复印一份吗？"],
+  "cotton": ["I only wear cotton in the summer, it's too hot.", "我夏天只穿棉质的，太热了。"],
+  "country": ["She grew up in the country but moved to the city.", "她在农村长大，但搬到城市了。"],
+  "cover": ["Can you cover for me on Thursday?", "你能帮我周四代班吗？"],
+  "cow": ["We saw cows on the drive through the countryside.", "我们开车穿越乡村时看到了奶牛。"],
+  "credit": ["I finally paid off my credit card debt.", "我终于还清信用卡债务了。"],
+  "crime": ["Crime in this neighborhood has gone down a lot.", "这个社区的犯罪率已经下降了很多。"],
+  "cruel": ["That comment was unnecessarily cruel.", "那个评论不必要地很残忍。"],
+  "cry": ["I actually cried at the end of that movie.", "那部电影的结尾我真的哭了。"],
+  "cup": ["My morning cup of coffee is non-negotiable.", "我早上那杯咖啡是必不可少的。"],
+  "curtain": ["The curtains in this room block out all the light.", "这个房间的窗帘把光线全挡住了。"],
+  "damage": ["The water damage in the kitchen was pretty bad.", "厨房的水渍损坏相当严重。"],
+  "danger": ["There's no real danger, the dog is friendly.", "没有真正的危险，那只狗很友善。"],
+  "dark": ["It gets dark so early in winter.", "冬天天黑得好早。"],
+  "daughter": ["His daughter just started walking.", "他的女儿刚刚开始走路了。"],
+  "day": ["What a day, I'm completely drained.", "真是累人的一天，我完全没力气了。"],
+  "dead": ["My phone is completely dead.", "我手机完全没电了。"],
+  "dear": ["Oh dear, I think I left the oven on.", "哦不，我觉得我把烤箱开着了。"],
+  "death": ["I'm scared to death of public speaking.", "我对公开演讲怕得要死。"],
+  "decision": ["It was a tough decision but I think it's right.", "这是个艰难的决定，但我认为是对的。"],
+  "deep": ["We had a really deep conversation last night.", "我们昨晚进行了一次非常深刻的对话。"],
+  "degree": ["It dropped ten degrees overnight.", "气温一夜之间降了十度。"],
+  "dependent": ["The whole plan is dependent on the weather.", "整个计划都取决于天气。"],
+  "design": ["I love the design of this place.", "我很喜欢这个地方的设计。"],
+  "desire": ["I have zero desire to go out tonight.", "我今晚完全没有出去的欲望。"],
+  "detail": ["Don't worry about the details, I'll handle it.", "不用担心细节，我来处理。"],
+  "development": ["The new development near the river is huge.", "河边那个新开发项目规模很大。"],
+  "different": ["This city is so different from where I grew up.", "这座城市和我长大的地方非常不同。"],
+  "direction": ["Can you give me directions to the station?", "你能告诉我怎么去车站吗？"],
+  "dirty": ["The subway is so dirty sometimes.", "地铁有时候真的很脏。"],
+  "discovery": ["The discovery of that café changed my morning routine.", "发现那家咖啡店改变了我早晨的日常。"],
+  "discussion": ["We should have a discussion about this later.", "我们待会儿应该讨论一下这件事。"],
+  "disease": ["I read about that disease in the news.", "我在新闻上看到了关于那种疾病的报道。"],
+  "distance": ["We walked such a long distance yesterday.", "我们昨天走了好远。"],
+  "do": ["What do you usually do on weekends?", "你周末通常都做什么？"],
+  "dog": ["My dog woke me up at six this morning.", "我的狗今早六点把我叫醒了。"],
+  "door": ["Can you get the door? My hands are full.", "你能开门吗？我两手都占着呢。"],
+  "doubt": ["I have no doubt she'll get the job.", "我毫不怀疑她会得到那份工作。"],
+  "down": ["Can you keep it down? I'm on a call.", "能小声点吗？我在打电话。"],
+  "drawer": ["The extra keys are in the top drawer.", "备用钥匙在最上面的抽屉里。"],
+  "dress": ["She walked in wearing the most beautiful dress.", "她穿着一件最漂亮的裙子走了进来。"],
+  "drink": ["What are you drinking? That looks good.", "你在喝什么？看起来很好喝。"],
+  "drop": ["I dropped my phone on the subway platform.", "我在地铁站台上把手机掉了。"],
+  "dry": ["My skin gets really dry in winter.", "我的皮肤冬天会非常干燥。"],
+  "dust": ["There's dust everywhere, I need to clean.", "到处都是灰尘，我需要打扫了。"],
+  "ear": ["I've had a ringing in my ear all day.", "我耳朵嗡嗡响了一整天。"],
+  "early": ["I have an early flight so I can't stay late.", "我有早班机，所以不能待太晚。"],
+  "earth": ["What on earth happened here?", "这里到底发生了什么？"],
+  "east": ["The sunrise on the east side is beautiful.", "东边的日出很美。"],
+  "edge": ["I'm on the edge of just quitting everything.", "我快要破罐子破摔了。"],
+  "education": ["Education is so expensive here compared to back home.", "这里的教育费用比家乡贵多了。"],
+  "effect": ["The coffee had zero effect on me today.", "咖啡今天对我完全没效果。"],
+  "egg": ["Do you want your egg scrambled or fried?", "你的鸡蛋要炒蛋还是煎蛋？"],
+  "elastic": ["I need some elastic for this project.", "我需要一些松紧带来做这个项目。"],
+  "electric": ["They just got an electric car, love it.", "他们刚买了辆电动车，很喜欢。"],
+  "end": ["At the end of the day, it worked out fine.", "最终还是解决了。"],
+  "engine": ["The engine light came on during my drive.", "我开车时发动机灯亮了。"],
+  "enough": ["I've had enough coffee for today.", "我今天咖啡喝够了。"],
+  "equal": ["We split the bill equal this time.", "这次我们平均分摊了账单。"],
+  "error": ["There's an error in the report, let me fix it.", "报告里有个错误，让我来改。"],
+  "even": ["She didn't even text me back.", "她连消息都没有回我。"],
+  "event": ["The whole event was really well organized.", "整个活动组织得非常好。"],
+  "ever": ["Have you ever tried Ethiopian food?", "你吃过埃塞俄比亚菜吗？"],
+  "every": ["He shows up late every single day.", "他每天都迟到。"],
+  "example": ["For example, this happened to me last Tuesday.", "比如，上周二就发生了这件事。"],
+  "experience": ["It was honestly one of the best experiences.", "说真的，那是最棒的经历之一。"],
+  "expert": ["She's basically an expert on this topic.", "她基本上是这个话题的专家。"],
+  "eye": ["My eyes are so tired from staring at screens.", "我眼睛盯屏幕盯得好累。"],
+  "face": ["She had the funniest look on her face.", "她脸上的表情超级好笑。"],
+  "fact": ["The fact is, nobody really knows yet.", "事实是，目前还没有人真正知道。"],
+  "fall": ["Be careful, it's slippery and easy to fall.", "小心，地很滑，容易摔倒。"],
+  "false": ["That information turned out to be completely false.", "那个信息结果是完全错误的。"],
+  "family": ["My whole family is coming for the holidays.", "我全家都会来过节。"],
+  "far": ["How far is the nearest grocery store?", "最近的超市有多远？"],
+  "farm": ["We visited a farm upstate last weekend.", "上周末我们去了州北部的一个农场。"],
+  "fat": ["This book is too fat to fit in my bag.", "这本书太厚了，放不进我的包。"],
+  "father": ["My father always said, never skip breakfast.", "我父亲总说，永远不要不吃早饭。"],
+  "fear": ["My biggest fear is being stuck in an elevator.", "我最大的恐惧是被困在电梯里。"],
+  "feather": ["There's a feather in my pillow sticking out.", "我枕头里有根羽毛戳出来了。"],
+  "feeling": ["I have a feeling today is going to be a good day.", "我感觉今天会是美好的一天。"],
+  "female": ["She's the first female director in the company.", "她是公司第一位女性总监。"],
+  "fertile": ["The soil here is very fertile, great for growing.", "这里的土壤非常肥沃，很适合种东西。"],
+  "field": ["She's one of the top names in her field.", "她是她所在领域顶尖的人之一。"],
+  "fight": ["They got into a fight over something stupid.", "他们为了一件蠢事打架了。"],
+  "finger": ["I cut my finger while chopping vegetables.", "我切菜的时候切到手指了。"],
+  "fire": ["Someone pulled the fire alarm and we all had to leave.", "有人拉了火警，我们都得离开。"],
+  "first": ["First things first, let's get coffee.", "先做最重要的事，我们先去喝咖啡。"],
+  "fish": ["We had the most amazing grilled fish for dinner.", "我们晚饭吃了最美味的烤鱼。"],
+  "fixed": ["Is the date fixed or can it still change?", "日期定了吗还是还能改？"],
+  "flag": ["The flag was waving in the strong wind.", "旗帜在强风中飘扬。"],
+  "flat": ["My tire went flat on the highway.", "我在高速公路上爆胎了。"],
+  "flight": ["My flight got delayed by three hours.", "我的航班延误了三个小时。"],
+  "floor": ["The floor in this café is really slippery.", "这家咖啡馆的地板很滑。"],
+  "flower": ["Someone left flowers at the front desk.", "有人在前台留了花。"],
+  "fly": ["A fly has been buzzing around all morning.", "一只苍蝇嗡嗡地叫了整个上午。"],
+  "food": ["The food at that new place was so good.", "那家新店的食物真的很好吃。"],
+  "foolish": ["That was a foolish thing to say.", "那话说得真蠢。"],
+  "foot": ["My feet are killing me after all that walking.", "走了那么多路，我的脚都废了。"],
+  "for": ["I've been waiting for this all week.", "我等这个等了一整个星期了。"],
+  "force": ["I had to force myself to go to the gym.", "我得强迫自己去健身房。"],
+  "fork": ["Do you need a fork or are you using chopsticks?", "你需要叉子还是用筷子？"],
+  "form": ["I've been filling out forms all morning.", "我整个上午都在填表。"],
+  "forward": ["I'm really looking forward to this weekend.", "我真的很期待这个周末。"],
+  "free": ["Are you free this Sunday for brunch?", "你这周日有空吃早午餐吗？"],
+  "frequent": ["She's a frequent customer at this café.", "她是这家咖啡馆的常客。"],
+  "friend": ["A friend of mine just moved to this neighborhood.", "我一个朋友刚搬到这个社区。"],
+  "from": ["I just got back from the supermarket.", "我刚从超市回来。"],
+  "fruit": ["I've been trying to eat more fruit lately.", "我最近一直在努力多吃水果。"],
+  "full": ["I'm completely full, that was delicious.", "我吃得太撑了，真的很好吃。"],
+  "future": ["I'm trying to be more positive about the future.", "我试着对未来更乐观一些。"],
+  "garden": ["Her garden is absolutely stunning in spring.", "她的花园春天的时候美极了。"],
+  "get": ["Can you get me a coffee while you're up?", "你起来的时候能帮我拿杯咖啡吗？"],
+  "girl": ["That little girl was singing to herself.", "那个小女孩在自己哼歌。"],
+  "give": ["Give me a second, I'm almost ready.", "给我一秒钟，我快好了。"],
+  "glass": ["Can I get a glass of water please?", "能给我一杯水吗？"],
+  "glove": ["I left my gloves on the train again.", "我又把手套落在火车上了。"],
+  "go": ["Want to go grab lunch somewhere?", "要不要出去找个地方吃午饭？"],
+  "goat": ["There were goats just wandering around the village.", "有山羊在村子里到处游荡。"],
+  "gold": ["That old watch is solid gold apparently.", "那块旧手表据说是纯金的。"],
+  "good": ["Things are looking good for the project.", "这个项目看起来进展不错。"],
+  "government": ["The government just announced a new policy.", "政府刚刚宣布了一项新政策。"],
+  "grass": ["The grass is always greener on the other side.", "人总是觉得别人的草坪更绿。"],
+  "great": ["It was so great running into you today.", "今天偶遇你真的太棒了。"],
+  "green": ["I'm trying to make more green choices.", "我在尝试做更多环保的选择。"],
+  "grey": ["The sky's been grey all week, so gloomy.", "整个星期天空都是灰色的，好阴郁。"],
+  "group": ["We split into small groups for the activity.", "我们分成小组进行活动。"],
+  "growth": ["The growth in this area has been insane lately.", "这个地区最近的发展势头很猛。"],
+  "guide": ["She was our guide for the whole tour.", "她是我们整个旅游的向导。"],
+  "gun": ["There's a lot of debate about gun laws here.", "这里关于枪支法律有很多争议。"],
+  "hair": ["I really need a haircut, it's getting out of control.", "我真的需要剪头发了，越来越乱了。"],
+  "hammer": ["Do you have a hammer? I need to hang something.", "你有锤子吗？我需要挂个东西。"],
+  "hand": ["Can you give me a hand moving this furniture?", "你能帮我搬一下这个家具吗？"],
+  "hanging": ["There's a beautiful painting hanging in the lobby.", "大厅里挂着一幅漂亮的画。"],
+  "happy": ["She looked genuinely happy when she got the news.", "她得到消息时看起来真的很开心。"],
+  "hard": ["This has been a really hard week.", "这一周真的很艰难。"],
+  "hat": ["I love your hat, where did you get it?", "我喜欢你的帽子，在哪里买的？"],
+  "hate": ["I hate being stuck in traffic.", "我讨厌堵车。"],
+  "have": ["Have you eaten yet?", "你吃了吗？"],
+  "he": ["He's been really quiet lately, noticed?", "他最近一直很安静，你注意到了吗？"],
+  "head": ["I have such a bad headache right now.", "我现在头痛得厉害。"],
+  "healthy": ["I've been trying to eat healthier lately.", "我最近一直在尝试吃得更健康。"],
+  "heart": ["That story really tugged at my heartstrings.", "那个故事真的触动了我的心弦。"],
+  "heat": ["The heat in the subway is unbearable.", "地铁里的热度让人受不了。"],
+  "help": ["Do you need any help with that?", "你需要我帮忙吗？"],
+  "here": ["I've never been here before, it's really nice.", "我以前从没来过这里，真的很不错。"],
+  "high": ["Rent is so high here it's honestly shocking.", "这里的租金高得令人咋舌。"],
+  "history": ["This neighborhood has a lot of history.", "这个社区有很多历史。"],
+  "hole": ["There's a hole in my sock.", "我的袜子有个洞。"],
+  "hollow": ["The tree trunk was completely hollow inside.", "那棵树的树干里面完全是空心的。"],
+  "hook": ["Hang your coat on the hook by the door.", "把外套挂在门边的钩子上。"],
+  "hope": ["I hope the weather holds up for the weekend.", "我希望天气在周末能保持好。"],
+  "horse": ["She's been taking horse riding lessons.", "她一直在上骑马课。"],
+  "hospital": ["She had to take him to the hospital last night.", "她昨晚不得不带他去医院。"],
+  "hour": ["The meeting ran for almost three hours.", "会议开了将近三个小时。"],
+  "house": ["They just bought a house in New Jersey.", "他们刚在新泽西买了栋房子。"],
+  "how": ["How was your weekend? Do anything fun?", "你周末怎么样？有做什么好玩的吗？"],
+  "humor": ["Her sense of humor is what I like most.", "她的幽默感是我最喜欢的。"],
+  "ice": ["There's ice on the sidewalk, watch your step.", "人行道上有冰，走路小心。"],
+  "idea": ["That's actually a really good idea.", "那实际上是个很好的主意。"],
+  "if": ["If you're hungry, there's leftover pizza.", "如果你饿了，还有剩下的披萨。"],
+  "ill": ["She called in ill this morning.", "她今早打电话说病了。"],
+  "important": ["Don't forget, the meeting tomorrow is important.", "别忘了，明天的会议很重要。"],
+  "in": ["Are you in for lunch today?", "你今天一起吃午饭吗？"],
+  "increase": ["There's been a huge increase in rent lately.", "最近租金涨了很多。"],
+  "industry": ["The whole industry has been changing rapidly.", "整个行业变化得非常快。"],
+  "ink": ["I need more ink for the printer.", "我打印机需要换墨水了。"],
+  "insect": ["There's some kind of insect in the kitchen.", "厨房里有某种昆虫。"],
+  "interest": ["I've been losing interest in social media.", "我对社交媒体越来越没兴趣了。"],
+  "invention": ["That invention has totally changed how we travel.", "那项发明彻底改变了我们的出行方式。"],
+  "iron": ["I need to iron my shirt before the interview.", "面试前我需要熨一下衬衫。"],
+  "island": ["I'd love to spend a week on a small island.", "我想在小岛上待一个星期。"],
+  "join": ["You should join us for dinner tonight.", "你今晚应该来和我们一起吃饭。"],
+  "journey": ["The journey took way longer than expected.", "旅程比预期的长多了。"],
+  "jump": ["I jumped at the chance to move to New York.", "我抓住机会搬到了纽约。"],
+  "keep": ["Keep the change, it's fine.", "零钱不用找了，没事的。"],
+  "kettle": ["The kettle is boiling, want some tea?", "水壶开了，要喝茶吗？"],
+  "key": ["I locked myself out, I can't find my key.", "我把自己锁在外面了，找不到钥匙。"],
+  "kick": ["She kicked the habit after just one month.", "她只用了一个月就戒掉了那个习惯。"],
+  "kind": ["She's been so kind to me since I moved here.", "自从我搬来这里，她一直对我很好。"],
+  "kiss": ["He gave her a quick kiss on the cheek.", "他在她脸颊上轻轻亲了一下。"],
+  "knee": ["My knee has been bothering me since the hike.", "自从那次爬山，我膝盖一直不舒服。"],
+  "knife": ["Be careful with that knife, it's really sharp.", "小心那把刀，真的很锋利。"],
+  "knowledge": ["Her knowledge of the city is incredible.", "她对这座城市的了解令人叹为观止。"],
+  "land": ["We finally landed after a seven-hour flight.", "经过七小时的飞行，我们终于着陆了。"],
+  "language": ["She speaks three languages fluently.", "她能流利地说三种语言。"],
+  "last": ["I can't believe that was the last episode.", "我不敢相信那是最后一集。"],
+  "late": ["Sorry I'm late, the train was a nightmare.", "抱歉迟到了，火车简直是噩梦。"],
+  "laugh": ["He made everyone laugh with that story.", "他用那个故事逗笑了所有人。"],
+  "law": ["There's a new law about that starting next year.", "从明年开始会有一项关于这方面的新法律。"],
+  "leaf": ["The leaves are starting to change color already.", "树叶已经开始变色了。"],
+  "learning": ["I've been learning a lot just from listening.", "我一直在通过听来学习很多东西。"],
+  "left": ["Take a left at the corner and you'll see it.", "在转角左转你就能看到了。"],
+  "leg": ["She broke her leg skiing last winter.", "她去年冬天滑雪摔断了腿。"],
+  "let": ["Let me know if you need anything.", "如果你需要什么就告诉我。"],
+  "letter": ["I got an actual letter in the mail, so rare.", "我收到了一封真正的信，太少见了。"],
+  "level": ["My energy level is zero today.", "我今天的精力为零。"],
+  "library": ["I used to spend hours in the library on weekends.", "我以前周末会在图书馆待好几个小时。"],
+  "light": ["Can you turn off the light when you leave?", "你离开的时候能关灯吗？"],
+  "limit": ["There's a time limit on the parking here.", "这里停车有时间限制。"],
+  "lip": ["The cold weather always dries out my lips.", "寒冷的天气总是让我嘴唇干裂。"],
+  "list": ["I made a list but then lost it.", "我列了一个清单，然后弄丢了。"],
+  "little": ["Just give me a little more time.", "再多给我一点时间。"],
+  "lock": ["Make sure you lock the door when you leave.", "你离开的时候确保把门锁好。"],
+  "long": ["That was a long day, I'm done.", "今天真是漫长的一天，我累了。"],
+  "look": ["This place looks completely different at night.", "这个地方晚上看起来完全不一样了。"],
+  "loose": ["One of the legs on this chair is loose.", "这把椅子有条腿松动了。"],
+  "loss": ["It was a big loss for the whole team.", "这对整个团队来说是个很大的损失。"],
+  "loud": ["The music is too loud, I can barely hear you.", "音乐太响了，我几乎听不到你说话。"],
+  "love": ["I love how quiet it gets late at night.", "我喜欢深夜变得如此安静。"],
+  "low": ["My energy has been really low this week.", "我这周精力真的很低。"],
+  "machine": ["The coffee machine broke down this morning.", "咖啡机今早坏了。"],
+  "make": ["I'll make some coffee, want some?", "我去煮咖啡，你要吗？"],
+  "male": ["It's a very male-dominated industry unfortunately.", "不幸的是，这是一个非常以男性为主导的行业。"],
+  "man": ["The man at the counter was really helpful.", "柜台那个男的非常热心。"],
+  "map": ["I still use a paper map sometimes, old habit.", "我有时还是用纸质地图，老习惯了。"],
+  "market": ["The farmers market opens early on Sundays.", "农贸市场周日一早就开了。"],
+  "married": ["They just got married last spring.", "他们去年春天刚结婚。"],
+  "match": ["Do you have a match or a lighter?", "你有火柴或打火机吗？"],
+  "material": ["What material is this jacket made of?", "这件夹克是什么材料做的？"],
+  "may": ["It may rain later, bring an umbrella.", "待会儿可能会下雨，带把伞。"],
+  "meal": ["That was honestly the best meal I've had in ages.", "说真的，那是我很久以来吃过最好的一顿饭。"],
+  "measure": ["We need to take some measure to fix this.", "我们需要采取一些措施来解决这个问题。"],
+  "meat": ["I've been cutting back on meat lately.", "我最近一直在减少肉类的摄入。"],
+  "medical": ["She had a medical appointment this morning.", "她今早有个医疗预约。"],
+  "meeting": ["We have back-to-back meetings all afternoon.", "我们整个下午都有连续不断的会议。"],
+  "memory": ["That song brings back so many memories.", "那首歌勾起了好多回忆。"],
+  "metal": ["The bag felt heavy because of the metal zipper.", "包因为金属拉链感觉很重。"],
+  "military": ["His father had a long military career.", "他父亲有很长的军旅生涯。"],
+  "milk": ["We ran out of milk again.", "我们又没牛奶了。"],
+  "mind": ["Do you mind if I sit here?", "你介意我坐这里吗？"],
+  "minute": ["Give me just one minute, I'll be right back.", "给我一分钟，我马上回来。"],
+  "mixed": ["I have mixed feelings about the whole thing.", "我对整件事有复杂的感受。"],
+  "money": ["I spent way too much money this weekend.", "我这个周末花了太多钱了。"],
+  "monkey": ["There were monkeys all over the temple grounds.", "寺庙里到处都是猴子。"],
+  "month": ["This has been the busiest month of the year.", "这是今年最忙的一个月。"],
+  "moon": ["The moon was so full and bright last night.", "昨晚月亮又圆又亮。"],
+  "morning": ["Every morning I tell myself I'll wake up earlier.", "每天早上我都告诉自己要早点起床。"],
+  "mother": ["My mother calls every Sunday without fail.", "我妈妈每个周日都会打电话，雷打不动。"],
+  "mountain": ["The view of the mountain was breathtaking.", "那座山的景色令人叹为观止。"],
+  "mouth": ["I burned the roof of my mouth on hot pizza.", "我被热披萨烫到口腔上颚了。"],
+  "move": ["We're planning to move to a bigger apartment.", "我们打算搬到一个更大的公寓。"],
+  "much": ["I appreciate it so much, thank you.", "太感谢你了，谢谢。"],
+  "muscle": ["My muscles are so sore after that class.", "上完那节课我肌肉好酸。"],
+  "music": ["What kind of music are you into these days?", "你最近喜欢听什么类型的音乐？"],
+  "nail": ["I broke a nail trying to open that package.", "我拆那个包裹的时候断了个指甲。"],
+  "name": ["I'm terrible with names, I always forget.", "我记名字很差，总是忘记。"],
+  "narrow": ["The hallway is so narrow two people can barely pass.", "走廊太窄了，两个人几乎无法并排通过。"],
+  "nation": ["This issue affects the whole nation.", "这个问题影响到整个国家。"],
+  "natural": ["Her talent is completely natural, no training.", "她的天赋是完全天生的，没有经过训练。"],
+  "near": ["Is there a pharmacy near here?", "这附近有药房吗？"],
+  "necessary": ["Is it really necessary to do this today?", "今天真的有必要做这件事吗？"],
+  "neck": ["My neck has been stiff all week from the pillow.", "我的脖子因为枕头的关系僵硬了整整一周。"],
+  "need": ["I really need a vacation right now.", "我现在真的很需要一个假期。"],
+  "needle": ["Threading a needle is impossible for me.", "我穿针引线真的不行。"],
+  "net": ["The wifi network here is barely working.", "这里的网络几乎连不上。"],
+  "new": ["Have you tried that new ramen place yet?", "你有没有试过那家新开的拉面店？"],
+  "news": ["Have you seen the news today? It's wild.", "你今天看新闻了吗？太疯狂了。"],
+  "night": ["Last night I couldn't sleep until two.", "昨晚我到凌晨两点才睡着。"],
+  "no": ["No worries, it happens to everyone.", "没关系，这种事谁都会碰到。"],
+  "noise": ["The noise from upstairs is driving me crazy.", "楼上的噪音快把我逼疯了。"],
+  "normal": ["It feels good to have a normal day for once.", "难得有个正常的一天，感觉很好。"],
+  "north": ["The good coffee shops are mostly north of here.", "好的咖啡店大多在这里的北边。"],
+  "nose": ["My nose has been running all day.", "我的鼻涕流了一整天。"],
+  "not": ["I'm not really feeling it today.", "我今天真的没什么状态。"],
+  "note": ["Leave me a note if you head out first.", "如果你先出门，给我留个便条。"],
+  "now": ["I'm kind of busy right now, can we talk later?", "我现在有点忙，可以稍后再聊吗？"],
+  "number": ["My phone number changed, let me give you the new one.", "我换号码了，让我给你新号码。"],
+  "nut": ["I always keep some nuts in my bag for snacking.", "我包里总是放些坚果当零食。"],
+  "of": ["I'm kind of sick of this weather.", "我有点受够这个天气了。"],
+  "off": ["I'm taking Friday off this week.", "我这周五请假。"],
+  "offer": ["They made me an offer I couldn't refuse.", "他们给了我一个我无法拒绝的offer。"],
+  "office": ["The office has been really quiet this week.", "这周办公室一直很安静。"],
+  "oil": ["We need more olive oil from the store.", "我们需要从商店买更多橄榄油。"],
+  "old": ["This building is so old but so charming.", "这栋楼很老了，但很有魅力。"],
+  "on": ["I'm on my way, five minutes out.", "我在路上了，还有五分钟。"],
+  "only": ["I only got four hours of sleep last night.", "我昨晚只睡了四个小时。"],
+  "open": ["Is the coffee shop open on Sundays?", "那家咖啡店周日开门吗？"],
+  "opinion": ["In my opinion, we should just go for it.", "在我看来，我们应该直接去做。"],
+  "opposite": ["The office is on the opposite side of the street.", "办公室在街道的对面。"],
+  "or": ["Coffee or tea? I'm making a run.", "咖啡还是茶？我去拿。"],
+  "orange": ["I had an orange and a coffee for breakfast.", "我早饭吃了个橙子和喝了杯咖啡。"],
+  "order": ["I'll place the order once everyone confirms.", "等大家都确认了，我就下单。"],
+  "organization": ["That organization does really important work.", "那个组织做的工作真的很重要。"],
+  "other": ["I'll find another way to get there.", "我会找另一种方式去那里的。"],
+  "out": ["Let's eat out tonight, I don't feel like cooking.", "今晚出去吃吧，我不想做饭。"],
+  "oven": ["The oven takes forever to preheat.", "烤箱预热要好久。"],
+  "over": ["Come over whenever you're free.", "你什么时候有空就过来。"],
+  "pain": ["The pain in my knee has been acting up again.", "我膝盖的疼痛又犯了。"],
+  "paper": ["I need to print this on actual paper.", "我需要把这个打印在真正的纸上。"],
+  "parallel": ["We've been running two parallel projects this month.", "我们这个月一直在同时运行两个项目。"],
+  "parcel": ["I have a parcel waiting at the post office.", "我有一个包裹在邮局等着取。"],
+  "part": ["The best part of the day was lunch.", "一天中最棒的部分是午饭。"],
+  "past": ["Let's not dwell on the past too much.", "我们不要太纠结于过去。"],
+  "payment": ["Payment went through, we're all set.", "付款已经通过了，一切搞定。"],
+  "peace": ["I just want some peace and quiet tonight.", "今晚我只想要安安静静。"],
+  "pen": ["Do you have a pen I can borrow?", "你有我可以借用的笔吗？"],
+  "pencil": ["I always think better when I write in pencil.", "我用铅笔写字的时候思维总是更清晰。"],
+  "person": ["She's genuinely the nicest person I've met here.", "她真的是我在这里遇到过最好的人。"],
+  "physical": ["I need to schedule my annual physical.", "我需要安排我的年度体检。"],
+  "picture": ["I love the pictures you posted from the trip.", "我很喜欢你发的旅行照片。"],
+  "pig": ["There was even a pig at that petting zoo.", "那个互动动物园里甚至有猪。"],
+  "pin": ["I need a pin to hold this together.", "我需要一根别针把这个固定住。"],
+  "pipe": ["The pipe under the sink started leaking.", "水槽下面的管道开始漏水了。"],
+  "place": ["This place has the best bagels in the city.", "这个地方有全市最好的百吉饼。"],
+  "plane": ["My plane got delayed by three hours.", "我的飞机延误了三个小时。"],
+  "plant": ["I keep forgetting to water my plants.", "我一直忘记给植物浇水。"],
+  "plate": ["Can I have a small plate on the side?", "能给我一个小碟子吗？"],
+  "play": ["The kids were playing in the park all afternoon.", "孩子们整个下午都在公园玩耍。"],
+  "please": ["Please don't be late, it's important.", "请不要迟到，这很重要。"],
+  "pleasure": ["It was a pleasure working with you on this.", "和你一起做这个项目是我的荣幸。"],
+  "pocket": ["My phone barely fits in this jacket pocket.", "我的手机几乎放不进这件夹克的口袋。"],
+  "point": ["At some point we need to talk about this.", "在某个时间点，我们需要谈谈这件事。"],
+  "poison": ["That pufferfish is apparently deadly poison.", "那种河豚据说含有致命的毒素。"],
+  "political": ["I try to avoid political conversations at work.", "我尽量避免在工作中讨论政治。"],
+  "poor": ["I felt so poor after paying rent this month.", "这个月付完房租后感觉自己好穷。"],
+  "position": ["I'm in a really awkward position right now.", "我现在处境非常尴尬。"],
+  "possible": ["Is it possible to move the meeting to Friday?", "会议有可能改到周五吗？"],
+  "pot": ["I left the pot on the stove and forgot about it.", "我把锅留在炉子上，然后忘了。"],
+  "potato": ["I've been obsessed with roasted potatoes lately.", "我最近迷上了烤土豆。"],
+  "power": ["The power went out for an hour last night.", "昨晚停电了一个小时。"],
+  "present": ["I want to be more present in conversations.", "我想在对话中更专注。"],
+  "price": ["The price of everything has gone up so much.", "什么东西的价格都涨了好多。"],
+  "private": ["Can we talk somewhere a little more private?", "我们能去个稍微私密一点的地方谈吗？"],
+  "process": ["The whole process took way longer than expected.", "整个过程比预期的长多了。"],
+  "profit": ["They turned a profit for the first time this year.", "他们今年首次实现了盈利。"],
+  "property": ["Property in this area is really expensive.", "这个地区的房产非常贵。"],
+  "protest": ["There was a protest outside city hall this morning.", "今早市政厅外面有人在抗议。"],
+  "public": ["I'm not great at speaking in public.", "我不太擅长公众演讲。"],
+  "pull": ["Let me pull up the address on my phone.", "让我在手机上查一下地址。"],
+  "purpose": ["The purpose of the meeting is still unclear.", "会议的目的还不清楚。"],
+  "push": ["Don't push yourself too hard today.", "今天不要太逼自己。"],
+  "put": ["Just put it on the table for now.", "先放桌上吧。"],
+  "quality": ["The quality of the food here is really consistent.", "这里食物的质量非常稳定。"],
+  "question": ["Good question, I honestly don't know.", "好问题，我说真的不知道。"],
+  "quick": ["Can I ask you a quick question?", "我可以快速问你一个问题吗？"],
+  "quiet": ["It's so quiet in here, I love it.", "这里好安静，我很喜欢。"],
+  "quite": ["It's quite a walk from the station.", "从车站走过来挺远的。"],
+  "rain": ["Looks like it's going to rain this afternoon.", "看样子今天下午会下雨。"],
+  "rat": ["Someone saw a rat in the subway this morning.", "今早有人在地铁里看到了一只老鼠。"],
+  "rate": ["The exchange rate has been all over the place.", "汇率最近波动很大。"],
+  "reaction": ["Her reaction to the news was pretty unexpected.", "她对这个消息的反应相当出乎意料。"],
+  "ready": ["Are you ready? We're going to be late.", "你准备好了吗？我们要迟到了。"],
+  "reason": ["There's no good reason to stay late tonight.", "今晚没有好理由要留下来加班。"],
+  "record": ["She broke the record by a full minute.", "她把纪录打破了整整一分钟。"],
+  "red": ["She walked in wearing a striking red coat.", "她穿着一件抢眼的红色外套走了进来。"],
+  "regret": ["I regret not taking that job when I had the chance.", "我后悔当初有机会时没有接受那份工作。"],
+  "regular": ["I'm a regular here, they know my order.", "我是这里的常客，他们知道我点什么。"],
+  "relation": ["Our work relation has been really smooth so far.", "我们目前为止的工作关系一直很顺畅。"],
+  "request": ["I put in a request for Friday off.", "我申请了周五休假。"],
+  "respect": ["I have a lot of respect for how she handled that.", "我非常敬佩她处理那件事的方式。"],
+  "responsible": ["She's the most responsible person on the team.", "她是团队里最负责任的人。"],
+  "rest": ["I'm going to rest this afternoon, no plans.", "我今天下午要休息，没有计划。"],
+  "reward": ["Hard work should come with some kind of reward.", "努力工作应该得到某种回报。"],
+  "rice": ["Can we get extra rice? I'm really hungry.", "能多加点米饭吗？我真的很饿。"],
+  "right": ["You're absolutely right, I didn't think of that.", "你说得完全对，我没想到这一点。"],
+  "ring": ["She was wearing the most beautiful ring.", "她戴着一枚最漂亮的戒指。"],
+  "river": ["There's a lovely walk along the river nearby.", "附近沿河有一条很美的步道。"],
+  "road": ["The road to the cabin was completely icy.", "通往小屋的路完全结冰了。"],
+  "roof": ["There's a rooftop bar just a few blocks away.", "几个街区外有一个屋顶酒吧。"],
+  "room": ["My room is such a mess right now.", "我的房间现在乱得一塌糊涂。"],
+  "root": ["The roots of that tree are coming up through the sidewalk.", "那棵树的根从人行道里钻出来了。"],
+  "rough": ["It's been a rough week, I need a break.", "这周很艰难，我需要休息一下。"],
+  "round": ["Let's do another round of introductions.", "我们再做一轮自我介绍吧。"],
+  "rule": ["There's a rule about no shoes inside.", "有一条规定是进屋要脱鞋。"],
+  "run": ["I went for a run this morning, first time in weeks.", "我今早跑步了，好几周以来的第一次。"],
+  "sad": ["I was so sad to hear she's moving away.", "听说她要搬走，我真的很难过。"],
+  "safe": ["Get home safe, text me when you're back.", "平安回家，到了发消息给我。"],
+  "salt": ["Can you pass the salt please?", "能把盐递给我吗？"],
+  "same": ["I was thinking the exact same thing.", "我想的和你一模一样。"],
+  "sand": ["There was sand everywhere after the beach trip.", "海滩旅行后到处都是沙子。"],
+  "say": ["What did you say? I didn't catch that.", "你说什么？我没听清。"],
+  "school": ["My kid starts school next week.", "我孩子下周开学了。"],
+  "science": ["She's really into science documentaries.", "她非常喜欢科学纪录片。"],
+  "scissors": ["Has anyone seen the scissors?", "有人看到剪刀了吗？"],
+  "sea": ["The sea was so calm this morning.", "今早海面非常平静。"],
+  "seat": ["Is this seat taken?", "这个座位有人吗？"],
+  "second": ["Just give me one second, I'll be right back.", "给我一秒钟，我马上回来。"],
+  "secret": ["Can you keep a secret? Something big is happening.", "你能保密吗？有件大事要发生了。"],
+  "see": ["I'll see you tomorrow morning.", "明天早上见。"],
+  "seed": ["I planted some seeds on the balcony.", "我在阳台上种了一些种子。"],
+  "seem": ["You seem a little off today, everything okay?", "你今天看起来有点不对劲，还好吗？"],
+  "selection": ["The selection at that market is incredible.", "那个市场的品种真的很丰富。"],
+  "send": ["Can you send me the address?", "你能把地址发给我吗？"],
+  "sense": ["That actually makes a lot of sense.", "那其实很有道理。"],
+  "separate": ["Can we get separate checks please?", "能分开结账吗？"],
+  "serious": ["Is this serious or are you joking around?", "你是认真的还是在开玩笑？"],
+  "sharp": ["She has a really sharp eye for detail.", "她对细节有非常敏锐的眼光。"],
+  "sheep": ["There were sheep grazing on the hillside.", "山坡上有羊在吃草。"],
+  "shelf": ["The top shelf is impossible to reach.", "最上面那层架子根本够不到。"],
+  "ship": ["We watched the huge ship come into the harbor.", "我们看着那艘大船驶入港湾。"],
+  "shirt": ["I spilled coffee all over my shirt this morning.", "我今早把咖啡洒了一衬衫。"],
+  "shoe": ["I've been wearing these shoes all day, my feet hurt.", "我穿这双鞋走了一整天，脚好痛。"],
+  "short": ["Life is short, just go for it.", "人生苦短，直接去做吧。"],
+  "side": ["Can I get that on the side please?", "能把那个放旁边吗？"],
+  "sign": ["That's always a good sign.", "那总是一个好兆头。"],
+  "silver": ["She always wears that silver bracelet.", "她总是戴着那个银手镯。"],
+  "simple": ["Let's keep it simple, no need to overthink.", "保持简单，不需要想太多。"],
+  "sister": ["My sister is coming to visit next month.", "我姐姐下个月要来看我。"],
+  "size": ["Do you have this in a smaller size?", "这个有小一号的吗？"],
+  "skin": ["The cold weather is really drying out my skin.", "寒冷的天气让我皮肤好干燥。"],
+  "skirt": ["I love her skirt, I wonder where she got it.", "我喜欢她的裙子，不知道在哪里买的。"],
+  "sky": ["The sky looks so clear today.", "今天天空好清澈。"],
+  "sleep": ["I only got like five hours of sleep.", "我只睡了大概五个小时。"],
+  "slow": ["The internet has been so slow all morning.", "网速整个上午都很慢。"],
+  "small": ["The apartment is small but really well designed.", "公寓很小，但设计得非常好。"],
+  "smell": ["Something smells really good in here.", "这里有什么东西闻起来很香。"],
+  "smile": ["Her smile is honestly contagious.", "她的笑容真的很有感染力。"],
+  "smoke": ["The fire alarm went off because of the smoke.", "烟雾触发了火灾警报。"],
+  "smooth": ["The whole process went really smooth.", "整个过程进行得非常顺利。"],
+  "snake": ["Someone found a snake in the garden.", "有人在花园里发现了一条蛇。"],
+  "snow": ["It's supposed to snow tonight apparently.", "据说今晚会下雪。"],
+  "so": ["So what are we doing for lunch?", "那我们午饭要吃什么？"],
+  "society": ["Social media has changed society so much.", "社交媒体改变了社会很多。"],
+  "sock": ["I can never find a matching pair of socks.", "我永远找不到配对的袜子。"],
+  "soft": ["This chair is so soft I might fall asleep.", "这把椅子太软了，我可能会睡着。"],
+  "solid": ["That's a solid plan, let's go with it.", "那是个可靠的计划，就这么干吧。"],
+  "some": ["I need some fresh air, want to walk outside?", "我需要呼吸新鲜空气，要不要出去走走？"],
+  "son": ["His son just started high school.", "他的儿子刚上高中。"],
+  "song": ["That song has been stuck in my head all day.", "那首歌在我脑子里转了一整天。"],
+  "sound": ["That actually sounds like a great plan.", "那听起来其实是个很好的计划。"],
+  "soup": ["This soup is exactly what I needed today.", "这碗汤正是我今天需要的。"],
+  "south": ["She moved to a neighborhood south of downtown.", "她搬到了市中心南边的一个社区。"],
+  "space": ["I just need a little space to think.", "我只是需要一点空间来思考。"],
+  "special": ["Tonight is a special occasion, let's celebrate.", "今晚是个特别的场合，我们庆祝一下。"],
+  "spoon": ["Can I get a spoon for my soup?", "能给我一个勺子喝汤吗？"],
+  "stage": ["She's been at this stage for a while now.", "她已经在这个阶段待了一段时间了。"],
+  "stamp": ["Do you have any stamps? I need to mail this.", "你有邮票吗？我需要寄这个。"],
+  "star": ["You could actually see stars from here last night.", "昨晚从这里真的能看到星星。"],
+  "start": ["Let's start over from the beginning.", "我们从头开始吧。"],
+  "station": ["Meet me at the station at seven.", "七点在车站见我。"],
+  "steam": ["The bathroom was full of steam after my shower.", "我洗完澡后浴室全是水蒸气。"],
+  "steel": ["The new bridge is made entirely of steel.", "新桥完全是钢铁建造的。"],
+  "step": ["Just take it one step at a time.", "一步一步来就好。"],
+  "stick": ["She walked in with a walking stick.", "她拄着拐杖走了进来。"],
+  "still": ["Are you still at the office?", "你还在办公室吗？"],
+  "stomach": ["My stomach has been off all day.", "我的胃一整天都不舒服。"],
+  "stone": ["The street is paved with old stone.", "这条街铺着古老的石头。"],
+  "stop": ["Can you stop? You're stressing me out.", "你能停止吗？你让我很有压力。"],
+  "store": ["The store downstairs sells everything.", "楼下那家店什么都卖。"],
+  "story": ["You have to hear the story about what happened.", "你一定要听听发生了什么事。"],
+  "straight": ["Just tell me straight, what happened?", "直说吧，发生了什么？"],
+  "strange": ["Something strange happened on my way here.", "我来这里的路上发生了一件奇怪的事。"],
+  "street": ["This street is completely different from five years ago.", "这条街跟五年前完全不一样了。"],
+  "strong": ["That coffee was way too strong for me.", "那杯咖啡对我来说太浓了。"],
+  "structure": ["The structure of the presentation was really clear.", "演讲的结构非常清晰。"],
+  "such": ["It was such a good weekend, honestly.", "说真的，这个周末真的太棒了。"],
+  "sudden": ["The sudden change in weather caught everyone off guard.", "天气突然变化让所有人都措手不及。"],
+  "sugar": ["I take my coffee with just a little sugar.", "我咖啡只加一点点糖。"],
+  "summer": ["This summer flew by way too fast.", "这个夏天过得太快了。"],
+  "sun": ["The sun finally came out after a week of rain.", "下了一周雨后太阳终于出来了。"],
+  "support": ["Thanks for your support, it really means a lot.", "谢谢你的支持，真的意义重大。"],
+  "surprise": ["She threw him a surprise party last weekend.", "上周末她给他办了个惊喜派对。"],
+  "sweet": ["That was such a sweet thing to do.", "那真的是非常体贴的举动。"],
+  "swim": ["I went for a swim this morning, it felt amazing.", "我今早去游泳了，感觉很棒。"],
+  "system": ["The ticketing system crashed again.", "售票系统又崩溃了。"],
+  "table": ["Can we get a table by the window?", "我们能要靠窗的桌子吗？"],
+  "tail": ["The dog was wagging its tail like crazy.", "那只狗疯狂地摇着尾巴。"],
+  "take": ["Take your time, there's no rush.", "慢慢来，不急。"],
+  "talk": ["We need to talk, but not right now.", "我们需要谈谈，但不是现在。"],
+  "tall": ["He's so tall he has to duck through doorways.", "他太高了，进门都要低头。"],
+  "taste": ["Can I have a taste of yours?", "我可以尝一口你的吗？"],
+  "tax": ["Tax season is always so stressful.", "报税季节总是很有压力。"],
+  "teaching": ["Her teaching style is so easy to follow.", "她的教学方式非常容易跟上。"],
+  "test": ["I have a test tomorrow, I'm so unprepared.", "我明天有个测试，我完全没准备。"],
+  "than": ["It's way cheaper than I expected.", "比我预想的便宜多了。"],
+  "that": ["I can't believe they said that.", "我不敢相信他们说了那种话。"],
+  "the": ["Have you tried the new place on Fifth Ave?", "你试过第五大道那家新店吗？"],
+  "then": ["Finish up and then we can head out.", "做完之后我们就可以出门了。"],
+  "theory": ["My theory is that he already knew.", "我的理论是他早就知道了。"],
+  "there": ["There's a great view from up there.", "从上面看风景很好。"],
+  "thick": ["The soup was thick and really filling.", "汤很浓，真的很饱足。"],
+  "thin": ["The walls are so thin I can hear everything.", "墙壁太薄了，我能听到所有声音。"],
+  "thing": ["The thing is, I'm not sure I agree.", "问题是，我不确定我是否同意。"],
+  "this": ["This weather is absolutely killing me.", "这天气真的要了我的命。"],
+  "though": ["It's cold out, though the sun is nice.", "外面虽然冷，但阳光很好。"],
+  "thought": ["I had a thought about how to fix this.", "我有个想法关于如何解决这个问题。"],
+  "throat": ["I woke up with a really sore throat.", "我醒来喉咙很痛。"],
+  "through": ["We got through the whole project in one day.", "我们一天就把整个项目做完了。"],
+  "thumb": ["I hit my thumb with a hammer.", "我用锤子砸到大拇指了。"],
+  "thunder": ["Did you hear that thunder last night?", "你昨晚听到那个雷声了吗？"],
+  "ticket": ["I already bought the tickets, it's sorted.", "我已经买好票了，都搞定了。"],
+  "tight": ["My schedule is really tight this week.", "我这周的时间安排非常紧。"],
+  "till": ["I was up working till two in the morning.", "我工作到凌晨两点才睡。"],
+  "time": ["I can't believe how fast time goes.", "我不敢相信时间过得这么快。"],
+  "tired": ["I'm so tired I could fall asleep standing up.", "我累得站着都能睡着。"],
+  "to": ["I need to talk to you about something.", "我有事要跟你说。"],
+  "toe": ["I stubbed my toe on the corner of the bed.", "我的脚趾磕到床角了。"],
+  "together": ["We should get together this weekend.", "我们这周末应该聚一下。"],
+  "tomorrow": ["I have an early meeting tomorrow, can't stay late.", "我明天有早会，不能待太晚。"],
+  "tongue": ["I burned my tongue on hot soup again.", "我又被热汤烫到舌头了。"],
+  "tooth": ["My tooth has been hurting since yesterday.", "我牙从昨天就开始痛了。"],
+  "top": ["She finished at the top of her class.", "她以班级第一的成绩毕业。"],
+  "touch": ["Keep in touch, okay? Don't be a stranger.", "保持联系，好吗？不要生疏了。"],
+  "town": ["This little town is so charming.", "这个小镇太迷人了。"],
+  "trade": ["There's a big trade show coming up next week.", "下周有个大型贸易展。"],
+  "train": ["I just barely made the train this morning.", "我今早差点没赶上火车。"],
+  "transport": ["Public transport here is actually pretty good.", "这里的公共交通其实相当不错。"],
+  "tray": ["Can you bring the tray over here?", "你能把托盘拿过来吗？"],
+  "tree": ["The trees on this block are gorgeous in fall.", "这个街区的树秋天真的很美。"],
+  "trouble": ["I got into a little trouble with the parking.", "我停车的事有点麻烦了。"],
+  "trousers": ["I need to get my trousers hemmed.", "我需要把裤子改短。"],
+  "true": ["Is that actually true? I had no idea.", "那是真的吗？我完全不知道。"],
+  "turn": ["It's your turn to pick the restaurant.", "该你选餐厅了。"],
+  "umbrella": ["I forgot my umbrella and of course it rained.", "我忘带伞，结果当然下雨了。"],
+  "under": ["The whole thing is under control, don't worry.", "一切都在掌控中，别担心。"],
+  "up": ["What's up? You look stressed.", "怎么了？你看起来很有压力。"],
+  "use": ["Use the back door, the front is locked.", "走后门，前门锁了。"],
+  "value": ["The value of this neighborhood has gone up so much.", "这个社区的价值涨了很多。"],
+  "very": ["Thank you very much, I really mean it.", "非常感谢，我是认真的。"],
+  "view": ["The view from her apartment is absolutely stunning.", "从她公寓看出去的景色真的很惊艳。"],
+  "violent": ["The storm was really violent last night.", "昨晚的暴风雨非常猛烈。"],
+  "voice": ["She has such a beautiful singing voice.", "她的歌声真的很好听。"],
+  "walk": ["I love taking a walk here in the evening.", "我喜欢傍晚在这里散步。"],
+  "wall": ["They painted the walls a really nice warm color.", "他们把墙漆成了很好看的暖色调。"],
+  "war": ["There's so much war in the news lately.", "最近新闻里有很多关于战争的内容。"],
+  "warm": ["It's finally warm enough to sit outside.", "终于够暖和了，可以坐在外面了。"],
+  "wash": ["I need to wash my hands, back in a sec.", "我需要去洗手，马上回来。"],
+  "waste": ["Don't waste good food, finish your plate.", "不要浪费好食物，把盘子里的吃完。"],
+  "watch": ["Nice watch, is that new?", "好看的手表，是新买的吗？"],
+  "water": ["Can I get some water please? I'm so thirsty.", "能给我一些水吗？我好渴。"],
+  "wave": ["She gave me a wave from across the street.", "她从街对面向我挥了挥手。"],
+  "way": ["Is there any way we can do this tomorrow instead?", "有没有办法明天再做这件事？"],
+  "weather": ["This weather is so unpredictable lately.", "这天气最近真的很难预测。"],
+  "week": ["This week has been absolutely exhausting.", "这周真的筋疲力尽。"],
+  "weight": ["I've been trying to lose a little weight.", "我一直在尝试减掉一点体重。"],
+  "well": ["Well, that meeting went better than expected.", "嗯，那个会议比预期的顺利。"],
+  "west": ["There's a great park on the west end of town.", "城镇西边有一个很棒的公园。"],
+  "wet": ["I got completely wet walking here without an umbrella.", "我没带伞走过来，全身都湿透了。"],
+  "wheel": ["The trolley wheel broke and it wouldn't move.", "手推车的轮子坏了，动不了。"],
+  "when": ["When does the next train come?", "下一班车什么时候来？"],
+  "where": ["Where did you find a parking spot?", "你在哪里找到停车位的？"],
+  "while": ["I listened to a podcast while commuting.", "我上班途中听了个播客。"],
+  "whistle": ["The referee blew the whistle and the game stopped.", "裁判吹了口哨，比赛停了下来。"],
+  "white": ["I spilled red wine on my white shirt.", "我把红酒洒在白衬衫上了。"],
+  "who": ["Who's coming to the party on Saturday?", "周六的派对谁会来？"],
+  "why": ["Why is it so loud in here today?", "今天这里为什么这么吵？"],
+  "wide": ["She opened her eyes wide when she heard the news.", "她听到消息时眼睛瞪得大大的。"],
+  "will": ["I'll be there in about ten minutes.", "我大概十分钟后到。"],
+  "wind": ["The wind is brutal out there today.", "今天外面风刮得很猛。"],
+  "window": ["The window is stuck, can you help me open it?", "窗户卡住了，你能帮我开吗？"],
+  "wine": ["Want some wine? I just opened a bottle.", "要来点酒吗？我刚开了瓶。"],
+  "wing": ["The chicken wings here are the best in the city.", "这里的鸡翅是全城最好的。"],
+  "winter": ["Winter came out of nowhere this year.", "今年冬天来得猝不及防。"],
+  "wire": ["There's a loose wire behind the TV.", "电视后面有根松动的电线。"],
+  "wise": ["That was a really wise decision.", "那是个非常明智的决定。"],
+  "with": ["I'm totally with you on that one.", "这件事我完全支持你。"],
+  "woman": ["The woman at the front desk was incredibly helpful.", "前台那位女士非常热心。"],
+  "wood": ["The smell of wood burning is so cozy.", "木材燃烧的气味很有温馨感。"],
+  "word": ["Word got out that she's leaving the company.", "她要离职的消息传开了。"],
+  "work": ["Work has been really hectic this week.", "这周工作真的很忙乱。"],
+  "worm": ["There were worms all over the sidewalk after the rain.", "下雨后人行道上到处都是蚯蚓。"],
+  "writing": ["Her writing is so clear and easy to read.", "她的文字非常清晰易读。"],
+  "wrong": ["Something feels wrong about this whole situation.", "这整件事感觉有什么地方不对劲。"],
+  "year": ["I can't believe the year is almost over.", "我不敢相信这一年快结束了。"],
+  "yellow": ["There's a yellow cab free right there.", "那边有辆空的黄色出租车。"],
+  "yes": ["Yes, I'll definitely be there.", "是的，我肯定会去的。"],
+  "yesterday": ["Yesterday was honestly one of the longest days.", "昨天说真的是最漫长的一天之一。"],
+  "you": ["You doing okay? You look tired.", "你还好吗？你看起来很累。"],
+  "young": ["She looks so young for her age.", "她看起来比实际年龄年轻很多。"]
+};
+
+function fetchSentence(wordObj){
+  const w=wordObj.w.toLowerCase();
+  const entry=SENTENCE_DB[w]||SENTENCE_DB[wordObj.w];
+  document.getElementById('loading-bar').classList.remove('active');
+  document.getElementById('loading-msg').classList.remove('active');
+  if(entry){
+    setupTyping(entry[0],entry[1],wordObj.w);
+  }else{
+    setupTyping(`I use the word ${wordObj.w} every day.`,`"${wordObj.z}"是一个很常用的词。`,wordObj.w);
+  }
+}
+
+function setupTyping(sentence,zh,targetWord){
+  currentSentence=sentence;currentSentenceZh=zh;
+  tokens=sentence.trim().split(/\s+/).filter(Boolean);
+  tokenIndex=0;hintCount=0;
+  tokenStates=tokens.map(()=>'pending');
+  tokenTyped=tokens.map(()=>'');
+  document.getElementById('mode-toggle').style.display='flex';
+  document.getElementById('sentence-box').style.display='block';
+  document.getElementById('full-reveal').style.display='none';
+  document.getElementById('hint-strip').style.display='none';
+  document.getElementById('sentence-zh').textContent='';
+  document.getElementById('feedback-row').style.display='none';
+  document.getElementById('btn-row').style.display='none';
+  document.getElementById('full-check-bar').style.display=practiceMode==='full'?'block':'none';
+  document.getElementById('sentence-label-text').textContent=practiceMode==='word'?'逐词输入句子':'输入完整句子';
+  document.getElementById('hint-btn').style.display=practiceMode==='word'?'':'none';
+  renderSlots();
+  updateWordCounter();
+  setTimeout(()=>speak(targetWord,null),400);
+}
+
+// 渲染格子输入行
+function renderSlots(){
+  const row=document.getElementById('slots-row');
+  row.innerHTML=tokens.map((t,i)=>{
+    // 宽度按词长自适应，最少3字符宽
+    const chars=Math.max(t.replace(/[^a-zA-Z'-]/g,'').length,3);
+    const w=Math.min(chars*11+16,160);
+    const state=tokenStates[i];
+    const val=tokenTyped[i]||'';
+    const isCurrent=(practiceMode==='word')&&(i===tokenIndex);
+    // label行：答对显示正确词，答错显示正确词作为提示，当前词显示序号
+    let label='';
+    if(state==='correct') label=`<div class="slot-label correct">✓</div>`;
+    else if(state==='wrong') label=`<div class="slot-label wrong" title="正确: ${t}">${t}</div>`;
+    else if(state==='hint-shown') label=`<div class="slot-label" style="color:var(--accent)">${t}</div>`;
+    else label=`<div class="slot-label">${i+1}</div>`;
+    const cls=['slot-input', state!=='pending'?state:'', isCurrent?'current':''].filter(Boolean).join(' ');
+    const disabled=(state!=='pending'&&practiceMode==='word')||(tokenStates.every(s=>s!=='pending'))?'disabled':'';
+    // 整句模式禁用已批改的格子
+    const disabledFull=practiceMode==='full'&&state!=='pending'?'disabled':'';
+    return `<div class="slot-wrap">
+      ${label}
+      <input class="${cls}" data-idx="${i}"
+        value="${val}"
+        style="width:${w}px"
+        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+        ${practiceMode==='word'&&state!=='pending'?'disabled':''}
+        ${practiceMode==='full'&&state!=='pending'?'disabled':''}
+        onkeydown="onSlotKey(event,${i})"
+        oninput="onSlotInput(event,${i})"
+      />
+    </div>`;
+  }).join('');
+  // 聚焦当前格子
+  focusSlot(tokenIndex);
+}
+
+function focusSlot(idx){
+  if(idx>=tokens.length)return;
+  setTimeout(()=>{
+    const inputs=document.querySelectorAll('#slots-row .slot-input');
+    if(inputs[idx]&&!inputs[idx].disabled)inputs[idx].focus();
+  },30);
+}
+
+function getSlotInput(idx){
+  return document.querySelectorAll('#slots-row .slot-input')[idx];
+}
+
+function onSlotInput(e,idx){
+  playTyping();
+  tokenTyped[idx]=e.target.value;
+  // 整句模式：自动跳到下一个空格（输入空格时）
+  if(practiceMode==='full'){
+    if(e.target.value.endsWith(' ')){
+      e.target.value=e.target.value.trimEnd();
+      tokenTyped[idx]=e.target.value;
+      focusSlot(idx+1);
+    }
+    return;
+  }
+  // 逐词模式：输入空格时自动提交
+  if(e.target.value.endsWith(' ')){
+    e.target.value=e.target.value.trimEnd();
+    tokenTyped[idx]=e.target.value;
+    submitSlot(idx);
+  }
+}
+
+function onSlotKey(e,idx){
+  if(e.key==='Enter'){
+    e.preventDefault();
+    if(practiceMode==='word') submitSlot(idx);
+    else{
+      // 整句模式Enter：跳到下一格，最后一格则核查
+      if(idx<tokens.length-1) focusSlot(idx+1);
+      else submitFullSentence();
+    }
+  }
+  if(e.key==='Tab'){
+    e.preventDefault();
+    focusSlot(e.shiftKey?idx-1:idx+1);
+  }
+  if(e.key==='Backspace'&&e.target.value===''&&idx>0&&practiceMode==='full'){
+    focusSlot(idx-1);
+  }
+}
+
+function normalizeWord(w){return w.replace(/[^a-zA-Z'-]/g,'').toLowerCase();}
+
+function submitSlot(idx){
+  if(idx!==tokenIndex||tokenStates[idx]!=='pending')return;
+  const inp=getSlotInput(idx);
+  const typed=(inp?inp.value:tokenTyped[idx]).trim();
+  if(!typed)return;
+  const expected=tokens[idx];
+  const correct=normalizeWord(typed)===normalizeWord(expected);
+  tokenTyped[idx]=typed;
+  if(correct){
+    tokenStates[idx]='correct';
+    playTick();
+    // flash green
+    if(inp){inp.classList.add('correct');inp.disabled=true;}
+  }else{
+    tokenStates[idx]='wrong';
+    playError();
+    if(inp){
+      inp.classList.add('wrong');inp.disabled=true;
+      inp.classList.add('shake');setTimeout(()=>inp.classList.remove('shake'),400);
+    }
+    showWordError(typed,expected);
+  }
+  tokenIndex++;
+  // update label above the slot
+  renderSlots();
+  updateWordCounter();
+  if(tokenIndex>=tokens.length){
+    setTimeout(finishSentence,300);
+  }
+}
+
+// 逐词模式兼容旧的submitWord调用
+function submitWord(){submitSlot(tokenIndex);}
+
+function updateWordCounter(){
+  const done=tokenStates.filter(s=>s!=='pending').length;
+  document.getElementById('word-counter').textContent=`${done} / ${tokens.length} 词`;
+}
+
+function showWordError(typed,expected){
+  const fb=document.getElementById('feedback-row');
+  const msg=document.getElementById('feedback-msg');
+  fb.style.display='block';
+  msg.className='feedback-msg wrong';
+  const t=typed.toLowerCase(),e=expected.toLowerCase();
+  let diff='';
+  for(let i=0;i<Math.max(t.length,e.length);i++){
+    if(t[i]!==e[i]){diff=` （第${i+1}个字母错了，应该是 "${e[i]||'?'}"，你打了 "${t[i]||'?'}"）`;break;}
+  }
+  msg.textContent=`✗  "${typed}" → 正确是 "${expected}"${diff}`;
+}
+
+function finishSentence(){
+  const allCorrect=tokenStates.every(s=>s==='correct');
+  // disable all slots
+  document.querySelectorAll('#slots-row .slot-input').forEach(el=>el.disabled=true);
+  const fb=document.getElementById('feedback-row');
+  const msg=document.getElementById('feedback-msg');
+  fb.style.display='block';
+  if(allCorrect){
+    msg.className='feedback-msg correct';
+    msg.textContent='🎉 完美！整句全对！';
+    playSuccess();launchConfetti();
+    if(!learnedWords.includes(currentWord.w)){
+      learnedWords.push(currentWord.w);
+      localStorage.setItem('learned850',JSON.stringify(learnedWords));
+    }
+  }else{
+    const wrongCount=tokenStates.filter(s=>s==='wrong').length;
+    msg.className='feedback-msg wrong';
+    msg.textContent=`完成！${wrongCount} 个词有误，格子上方显示正确答案`;
+    // show full correct sentence
+    const reveal=document.getElementById('full-reveal');
+    reveal.innerHTML=tokens.map((t,i)=>
+      tokenStates[i]==='correct'
+        ?`<span style="color:var(--accent2)">${t}</span>`
+        :`<em>${t}</em>`
+    ).join(' ');
+    reveal.style.display='block';
+  }
+  document.getElementById('sentence-zh').textContent=currentSentenceZh;
+  setTimeout(()=>speak(currentSentence,'speak-btn'),600);
+  practiceCount++;localStorage.setItem('practiceCount850',practiceCount);
+  updateStats();filterWords();
+  document.getElementById('btn-row').style.display='flex';
+}
+
+function toggleHint(){
+  if(practiceMode==='full')return;
+  if(tokenIndex>=tokens.length)return;
+  const currentToken=tokens[tokenIndex];
+  const strip=document.getElementById('hint-strip');
+  hintCount++;
+  let hint='';
+  if(hintCount===1)hint=currentToken[0]+'___';
+  else if(hintCount===2)hint=currentToken.slice(0,Math.ceil(currentToken.length/2))+'...';
+  else{hint=currentToken;tokenStates[tokenIndex]='hint-shown';renderSlots();}
+  strip.style.display='flex';
+  strip.innerHTML=`<span class="hint-word">💡 提示：${hint}</span>`;
+  if(hintCount>=3)hintCount=0;
+}
+
+function revealAll(){
+  const reveal=document.getElementById('full-reveal');
+  reveal.innerHTML=tokens.join(' ');
+  reveal.style.display='block';
+  document.getElementById('sentence-zh').textContent=currentSentenceZh;
+}
+
+function setMode(mode){
+  practiceMode=mode;
+  document.getElementById('mode-btn-word').classList.toggle('active',mode==='word');
+  document.getElementById('mode-btn-full').classList.toggle('active',mode==='full');
+  document.getElementById('hint-btn').style.display=mode==='word'?'':'none';
+  document.getElementById('full-check-bar').style.display=mode==='full'?'block':'none';
+  document.getElementById('sentence-label-text').textContent=mode==='word'?'逐词输入句子':'输入完整句子';
+  // re-render slots for new mode (if already in practice)
+  if(tokens.length>0){
+    tokenStates=tokens.map(()=>'pending');
+    tokenTyped=tokens.map(()=>'');
+    tokenIndex=0;hintCount=0;
+    document.getElementById('feedback-row').style.display='none';
+    document.getElementById('btn-row').style.display='none';
+    document.getElementById('full-reveal').style.display='none';
+    document.getElementById('hint-strip').style.display='none';
+    document.getElementById('sentence-zh').textContent='';
+    renderSlots();updateWordCounter();
+  }
+}
+
+function handleFullKey(e){} // no longer needed
+function playTypingIfNeeded(){playTyping();}
+function handleKey(e){if(e.key==='Enter'){e.preventDefault();submitWord();}}
+function handleInput(){
+  const inp=document.getElementById('word-input');
+  if(inp&&inp.value.length>0)playTyping();
+  if(inp&&inp.value.endsWith(' ')){inp.value=inp.value.trimEnd();submitWord();}
+}
+
+function submitFullSentence(){
+  // collect all slot values and check
+  const inputs=document.querySelectorAll('#slots-row .slot-input');
+  tokenStates=tokens.map((t,i)=>{
+    const uw=(inputs[i]?inputs[i].value.trim():tokenTyped[i])||'';
+    tokenTyped[i]=uw;
+    return normalizeWord(uw)===normalizeWord(t)?'correct':'wrong';
+  });
+  tokenIndex=tokens.length;
+  renderSlots();updateWordCounter();
+  finishSentence();
+}
+
+function retryCurrent(){
+  setupTyping(currentSentence,currentSentenceZh,currentWord.w);
+}
+
+function nextWord(){practiceIndex++;updateProgress();loadPracticeWord();}
+
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+if(window.speechSynthesis){window.speechSynthesis.getVoices();window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();}
+
+// ── 快捷键（Shift+数字/空格，输入框有焦点时也能用）──
+document.addEventListener('keydown',function(e){
+  const practiceVisible=document.getElementById('tab-practice').classList.contains('active');
+  if(!practiceVisible||!e.shiftKey)return;
+  if(e.code==='Digit1'){e.preventDefault();speakCurrent();showShortcutFlash('1');}
+  else if(e.code==='Digit2'){e.preventDefault();applySpeed(0.8);showShortcutFlash('2');}
+  else if(e.code==='Digit3'){e.preventDefault();applySpeed(1.0);showShortcutFlash('3');}
+  else if(e.code==='Digit4'){e.preventDefault();applySpeed(1.2);showShortcutFlash('4');}
+  else if(e.code==='Digit5'){e.preventDefault();toggleHint();showShortcutFlash('5');}
+  else if(e.code==='Digit6'){e.preventDefault();revealAll();showShortcutFlash('6');}
+  else if(e.code==='Space'){
+    e.preventDefault();
+    // 只在句子完成后有效
+    const btnRow=document.getElementById('btn-row');
+    if(btnRow.style.display!=='none'){nextWord();showShortcutFlash('space');}
+  }
+});
+
+function applySpeed(speed){
+  const idMap={0.8:'spd-slow',1.0:'spd-normal',1.2:'spd-fast'};
+  setSpeed(speed,null,idMap[speed]);
+}
+
+// 快捷键按下时的视觉闪烁反馈
+function showShortcutFlash(key){
+  // 找到对应按钮闪一下
+  const map={'1':'speak-btn','2':null,'3':null,'4':null,'5':'hint-btn','6':null};
+  const btnId=map[key];
+  if(btnId){
+    const btn=document.getElementById(btnId);
+    if(btn){btn.style.transform='scale(0.9)';setTimeout(()=>btn.style.transform='',150);}
+  }
+  // 显示一个浮动提示
+  let toast=document.getElementById('shortcut-toast');
+  if(!toast){
+    toast=document.createElement('div');
+    toast.id='shortcut-toast';
+    toast.style.cssText='position:fixed;bottom:32px;right:32px;background:var(--card);border:1px solid var(--border);color:var(--accent);font-family:"DM Mono",monospace;font-size:13px;padding:8px 16px;border-radius:8px;z-index:500;opacity:0;transition:opacity .15s;pointer-events:none;';
+    document.body.appendChild(toast);
+  }
+  const labels={'1':'🔊 朗读  [⇧1]','2':'🐢 慢速  [⇧2]','3':'▶ 正常  [⇧3]','4':'🐇 快速  [⇧4]','5':'💡 提示  [⇧5]','6':'👁 答案  [⇧6]','space':'⇧空格  下一个 →'};
+  toast.textContent=`[${key}] ${labels[key]}`;
+  toast.style.opacity='1';
+  clearTimeout(toast._timer);
+  toast._timer=setTimeout(()=>toast.style.opacity='0',900);
+}
+</script>
+</body>
+</html>
